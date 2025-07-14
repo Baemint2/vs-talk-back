@@ -1,3 +1,5 @@
 spring:
   application:
     name: vs-talk-backend
+  config:
+    import: 'classpath:info.yml'
