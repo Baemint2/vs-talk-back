@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -28,17 +27,23 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "provider_type")
     private ProviderType providerType;
 
-    @Column(name = "provider_key")
     private String providerKey;
 
-    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "last_login_date")
     private LocalDateTime lastLogin;
+
+    @OneToMany(mappedBy = "author")
+    private List<Post> posts;
+
+    @OneToMany(mappedBy = "author")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "author")
+    private List<Vote> votes;
 
     public void changeLastLoginDate() {
         this.lastLogin = LocalDateTime.now();
