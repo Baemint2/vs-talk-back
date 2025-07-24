@@ -1,13 +1,18 @@
 package com.moz1mozi.vstalkbackend.controller;
 
+import com.moz1mozi.vstalkbackend.dto.LoginRequest;
 import com.moz1mozi.vstalkbackend.dto.user.UserDto;
+import com.moz1mozi.vstalkbackend.service.AuthService;
 import com.moz1mozi.vstalkbackend.service.UserService;
+import com.moz1mozi.vstalkbackend.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
@@ -20,6 +25,8 @@ import static com.moz1mozi.vstalkbackend.utils.CookieUtil.deleteCookie;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
+    private final JwtUtil jwtUtil;
 
     @GetMapping("/api/v1/userInfo")
     public ResponseEntity<?> getUserInfo(Principal principal) {
@@ -52,4 +59,17 @@ public class UserController {
         return ResponseEntity.ok("로그아웃 성공");
 
     }
+
+    @PostMapping("/api/v1/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+        Authentication auth = authService.login(request);
+
+        String accessToken = jwtUtil.createAccessToken(auth);
+        String refreshToken = jwtUtil.createRefreshToken(auth);
+        jwtUtil.setTokensAndCookies(accessToken, refreshToken, response);
+        log.info("authentication: {}", auth.getName());
+        return ResponseEntity.ok(auth.getName());
+    }
+
+
 }

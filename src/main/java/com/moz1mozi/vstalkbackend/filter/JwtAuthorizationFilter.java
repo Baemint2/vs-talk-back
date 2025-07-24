@@ -118,18 +118,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private boolean isExcludedPath(String requestURI, String method) {
         return requestURI.equals("/login") ||
-//                requestURI.equals("/api/auth/logout/v1") ||
-//                requestURI.equals("/user/login") ||
+                requestURI.equals("/api/auth/logout/v1") ||
+                requestURI.equals("/api/v1/login") ||
                 requestURI.equals("/logout") ||
                 requestURI.contains("/css/style") ||
                 requestURI.startsWith("/static/") ||
                 requestURI.contains("/img/") ||
                 requestURI.contains("manifest") ||
-                requestURI.contains("/login.js") ||
                 requestURI.startsWith("/oauth2/authorization") ||  // OAuth2 로그인 요청 경로
-                requestURI.startsWith("/login/oauth2/code") ||
-                requestURI.equals("/api/v1/joke") && method.equalsIgnoreCase("GET") ||
-                requestURI.startsWith("/api/v1/check") ;
+                requestURI.startsWith("/login/oauth2/code");
     }
 
     private boolean isTokenExcluded(String requestURI) {

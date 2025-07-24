@@ -24,6 +24,8 @@ public class User extends BaseTimeEntity {
     private String email;
     private String profile;
     private String nickname;
+
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Enumerated(EnumType.STRING)
@@ -70,6 +72,7 @@ public class User extends BaseTimeEntity {
     public UserDto toDto() {
         return UserDto.builder()
                 .username(username)
+                .password(password)
                 .email(email)
                 .nickname(nickname)
                 .profile(profile)
