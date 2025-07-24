@@ -22,4 +22,9 @@ public class CategoryService {
                 .map(Category::toDto)
                 .toList();
     }
+
+    public Category getCategory(String name) {
+        return categoryRepository.findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+    }
 }
