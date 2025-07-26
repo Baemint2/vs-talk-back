@@ -1,8 +1,8 @@
 package com.moz1mozi.vstalkbackend.service;
 
-import com.moz1mozi.vstalkbackend.dto.VoteOptionDto;
-import com.moz1mozi.vstalkbackend.dto.post.PostCreateDto;
-import com.moz1mozi.vstalkbackend.dto.post.PostDto;
+import com.moz1mozi.vstalkbackend.dto.vote.response.VoteOptionDto;
+import com.moz1mozi.vstalkbackend.dto.post.request.PostCreateDto;
+import com.moz1mozi.vstalkbackend.dto.post.response.PostDto;
 import com.moz1mozi.vstalkbackend.entity.Category;
 import com.moz1mozi.vstalkbackend.entity.Post;
 import com.moz1mozi.vstalkbackend.entity.User;
@@ -28,7 +28,7 @@ public class PostService {
 
         User byUsername = userService.findByUsername(dto.getUsername());
 
-        Category category = categoryService.getCategory(dto.getCategoryName());
+        Category category = categoryService.getCategory(dto.getCategoryId());
 
         Post post = Post.builder()
                 .title(dto.getTitle())

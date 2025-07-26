@@ -1,8 +1,6 @@
 package com.moz1mozi.vstalkbackend.service;
 
-import com.moz1mozi.vstalkbackend.auth.UserSecurityService;
-import com.moz1mozi.vstalkbackend.dto.LoginRequest;
-import com.moz1mozi.vstalkbackend.dto.user.UserCreateDto;
+import com.moz1mozi.vstalkbackend.dto.user.request.UserCreateDto;
 import com.moz1mozi.vstalkbackend.entity.ProviderType;
 import com.moz1mozi.vstalkbackend.entity.Role;
 import com.moz1mozi.vstalkbackend.entity.User;

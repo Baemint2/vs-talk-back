@@ -1,4 +1,4 @@
-package com.moz1mozi.vstalkbackend.auth.oauth2;
+package com.moz1mozi.vstalkbackend.common.auth.oauth2;
 
 import com.moz1mozi.vstalkbackend.entity.ProviderType;
 import com.moz1mozi.vstalkbackend.entity.Role;

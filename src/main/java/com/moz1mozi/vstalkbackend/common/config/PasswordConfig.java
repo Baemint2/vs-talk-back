@@ -1,4 +1,4 @@
-package com.moz1mozi.vstalkbackend.config;
+package com.moz1mozi.vstalkbackend.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

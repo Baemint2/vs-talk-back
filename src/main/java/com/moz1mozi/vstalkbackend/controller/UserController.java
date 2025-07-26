@@ -1,10 +1,10 @@
 package com.moz1mozi.vstalkbackend.controller;
 
-import com.moz1mozi.vstalkbackend.dto.LoginRequest;
-import com.moz1mozi.vstalkbackend.dto.user.UserDto;
+import com.moz1mozi.vstalkbackend.dto.auth.LoginRequest;
+import com.moz1mozi.vstalkbackend.dto.user.response.UserDto;
 import com.moz1mozi.vstalkbackend.service.AuthService;
 import com.moz1mozi.vstalkbackend.service.UserService;
-import com.moz1mozi.vstalkbackend.utils.JwtUtil;
+import com.moz1mozi.vstalkbackend.common.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
-import static com.moz1mozi.vstalkbackend.utils.CookieUtil.deleteCookie;
+import static com.moz1mozi.vstalkbackend.common.utils.CookieUtil.deleteCookie;
 
 @Slf4j
 @RestController

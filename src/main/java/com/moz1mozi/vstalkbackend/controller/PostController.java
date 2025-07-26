@@ -1,8 +1,7 @@
 package com.moz1mozi.vstalkbackend.controller;
 
-import com.moz1mozi.vstalkbackend.dto.post.PostCreateDto;
-import com.moz1mozi.vstalkbackend.dto.post.PostDto;
-import com.moz1mozi.vstalkbackend.entity.Post;
+import com.moz1mozi.vstalkbackend.dto.post.request.PostCreateDto;
+import com.moz1mozi.vstalkbackend.dto.post.response.PostDto;
 import com.moz1mozi.vstalkbackend.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

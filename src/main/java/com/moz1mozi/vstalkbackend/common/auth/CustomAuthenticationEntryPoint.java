@@ -1,4 +1,4 @@
-package com.moz1mozi.vstalkbackend.auth;
+package com.moz1mozi.vstalkbackend.common.auth;
 
 
 import jakarta.servlet.http.Cookie;

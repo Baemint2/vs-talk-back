@@ -1,6 +1,6 @@
 package com.moz1mozi.vstalkbackend.entity;
 
-import com.moz1mozi.vstalkbackend.dto.VoteOptionDto;
+import com.moz1mozi.vstalkbackend.dto.vote.response.VoteOptionDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

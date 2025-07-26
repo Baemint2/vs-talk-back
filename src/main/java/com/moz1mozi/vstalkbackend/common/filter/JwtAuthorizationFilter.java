@@ -1,9 +1,9 @@
-package com.moz1mozi.vstalkbackend.filter;
+package com.moz1mozi.vstalkbackend.common.filter;
 
 
-import com.moz1mozi.vstalkbackend.auth.CustomUserDetails;
-import com.moz1mozi.vstalkbackend.auth.UserSecurityService;
-import com.moz1mozi.vstalkbackend.utils.JwtUtil;
+import com.moz1mozi.vstalkbackend.common.auth.CustomUserDetails;
+import com.moz1mozi.vstalkbackend.common.auth.UserSecurityService;
+import com.moz1mozi.vstalkbackend.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -126,13 +126,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 requestURI.contains("/img/") ||
                 requestURI.contains("manifest") ||
                 requestURI.startsWith("/oauth2/authorization") ||  // OAuth2 로그인 요청 경로
-                requestURI.startsWith("/login/oauth2/code");
+                requestURI.startsWith("/login/oauth2/code") ||
+                requestURI.startsWith("/api/post") ||
+                requestURI.startsWith("/api/vote");
     }
 
     private boolean isTokenExcluded(String requestURI) {
         return requestURI.equals("/api/v1/loginCheck") ||
                 requestURI.equals("/api/v1/userInfo") ||
                 requestURI.equals("/api/v1/allUserJoke") ||
-                requestURI.equals("/api/v1/userJoke");
+                requestURI.equals("/api/v1/userJoke") ||
+                requestURI.startsWith("/api/post");
     }
 }

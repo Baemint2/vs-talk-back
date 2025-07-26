@@ -1,4 +1,4 @@
-package com.moz1mozi.vstalkbackend.dto;
+package com.moz1mozi.vstalkbackend.dto.vote.response;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.moz1mozi.vstalkbackend.dto.post;
+package com.moz1mozi.vstalkbackend.dto.post.request;
 
 import com.moz1mozi.vstalkbackend.dto.vote.request.VoteOptionCreateDto;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.List;
 public class PostCreateDto {
     private String title;
     private String content;
-    private String categoryName;
+    private Long categoryId;
     private String videoId;
     private boolean isSecret;
     private boolean isDeleted;

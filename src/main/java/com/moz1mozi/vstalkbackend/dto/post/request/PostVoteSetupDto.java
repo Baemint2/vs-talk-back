@@ -1,4 +1,4 @@
-package com.moz1mozi.vstalkbackend.dto.post;
+package com.moz1mozi.vstalkbackend.dto.post.request;
 
 import com.moz1mozi.vstalkbackend.dto.vote.request.VoteOptionCreateDto;
 import lombok.Getter;

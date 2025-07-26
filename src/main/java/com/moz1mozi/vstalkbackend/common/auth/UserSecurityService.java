@@ -1,4 +1,4 @@
-package com.moz1mozi.vstalkbackend.auth;
+package com.moz1mozi.vstalkbackend.common.auth;
 
 import com.moz1mozi.vstalkbackend.entity.User;
 import com.moz1mozi.vstalkbackend.service.UserService;

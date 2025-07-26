@@ -1,8 +1,7 @@
-package com.moz1mozi.vstalkbackend.auth;
+package com.moz1mozi.vstalkbackend.common.auth;
 
-import com.moz1mozi.vstalkbackend.utils.JwtUtil;
+import com.moz1mozi.vstalkbackend.common.utils.JwtUtil;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

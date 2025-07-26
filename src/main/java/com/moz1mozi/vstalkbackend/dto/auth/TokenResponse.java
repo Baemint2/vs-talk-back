@@ -1,4 +1,4 @@
-package com.moz1mozi.vstalkbackend.dto;
+package com.moz1mozi.vstalkbackend.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

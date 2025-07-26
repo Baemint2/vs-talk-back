@@ -1,12 +1,12 @@
-package com.moz1mozi.vstalkbackend.config;
+package com.moz1mozi.vstalkbackend.common.config;
 
-import com.moz1mozi.vstalkbackend.auth.CustomAuthenticationEntryPoint;
-import com.moz1mozi.vstalkbackend.auth.LoginSuccessHandler;
-import com.moz1mozi.vstalkbackend.auth.UserSecurityService;
-import com.moz1mozi.vstalkbackend.auth.oauth2.CustomOAuth2AccessTokenResponseClient;
-import com.moz1mozi.vstalkbackend.auth.oauth2.OAuth2UserService;
-import com.moz1mozi.vstalkbackend.filter.JwtAuthorizationFilter;
-import com.moz1mozi.vstalkbackend.utils.JwtUtil;
+import com.moz1mozi.vstalkbackend.common.auth.CustomAuthenticationEntryPoint;
+import com.moz1mozi.vstalkbackend.common.auth.LoginSuccessHandler;
+import com.moz1mozi.vstalkbackend.common.auth.UserSecurityService;
+import com.moz1mozi.vstalkbackend.common.auth.oauth2.CustomOAuth2AccessTokenResponseClient;
+import com.moz1mozi.vstalkbackend.common.auth.oauth2.OAuth2UserService;
+import com.moz1mozi.vstalkbackend.common.filter.JwtAuthorizationFilter;
+import com.moz1mozi.vstalkbackend.common.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +43,8 @@ public class SecurityConfig {
         http
             .cors(AbstractHttpConfigurer::disable)
             .csrf(AbstractHttpConfigurer::disable)
-            .headers(headersConfigurer -> headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+            .headers(headersConfigurer ->
+                    headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
             .authorizeHttpRequests(request -> request
                     .requestMatchers("/api/v1/bookmark").authenticated()
                             .anyRequest().permitAll())

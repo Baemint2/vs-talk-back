@@ -1,4 +1,4 @@
-package com.moz1mozi.vstalkbackend.dto.user;
+package com.moz1mozi.vstalkbackend.dto.user.request;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.moz1mozi.vstalkbackend.entity;
 
-import com.moz1mozi.vstalkbackend.dto.post.PostDto;
+import com.moz1mozi.vstalkbackend.dto.post.response.PostDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
