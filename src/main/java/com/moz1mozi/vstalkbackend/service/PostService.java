@@ -46,7 +46,6 @@ public class PostService {
             voteOptionService.createVoteOptions(savedPost, dto.getVoteOptions());
         }
 
-
         return savedPost.getId();
     }
 
@@ -65,7 +64,13 @@ public class PostService {
     }
 
     public List<PostDto> getPostList() {
-        List<Post> posts = postRepository.findAll();
+        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();
         return posts.stream().map(Post::toDto).toList();
+    }
+
+    // 특정 카테고리에 속해있는 게시물 리스트만 가져오기
+    public List<PostDto> getPostListByCategory(String categoryName) {
+        List<Post> categoryPosts = postRepository.findByCategoryNameOrderByCreatedAtDesc(categoryName);
+        return categoryPosts.stream().map(Post::toDto).toList();
     }
 }

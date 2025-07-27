@@ -22,4 +22,20 @@ public class PostDto {
     private boolean isDeleted;
     private boolean voteEnabled;
     private LocalDateTime updatedAt;
+
+    @Override
+    public String toString() {
+        return "PostDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", categoryName='" + categoryName + '\'' +
+                ", videoId='" + videoId + '\'' +
+                ", voteOptionList=" + voteOptionList +
+                ", isSecret=" + isSecret +
+                ", isDeleted=" + isDeleted +
+                ", voteEnabled=" + voteEnabled +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

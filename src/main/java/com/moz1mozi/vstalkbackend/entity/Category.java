@@ -3,6 +3,7 @@ package com.moz1mozi.vstalkbackend.entity;
 import com.moz1mozi.vstalkbackend.dto.category.response.CategoryDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,5 +31,11 @@ public class Category extends BaseTimeEntity {
                 .id(id)
                 .name(name)
                 .build();
+    }
+
+    @Builder
+    public Category(String name, boolean isDeleted) {
+        this.name = name;
+        this.isDeleted = isDeleted;
     }
 }
