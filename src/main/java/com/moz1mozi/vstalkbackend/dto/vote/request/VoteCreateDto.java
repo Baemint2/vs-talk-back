@@ -8,13 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VoteCreateDto {
 
-    private String username;
     private Long postId;
     private Long optionId;
 
     @Builder
-    public VoteCreateDto(String username, Long postId, Long optionId) {
-        this.username = username;
+    public VoteCreateDto(Long postId, Long optionId) {
         this.postId = postId;
         this.optionId = optionId;
     }

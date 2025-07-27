@@ -10,7 +10,6 @@ import lombok.Setter;
 public class VoteCountDto {
     private Long voteOptionId;
     private Long count;
-    private Long totalCount;
 
     public VoteCountDto(Long voteOptionId, Long count) {
         this.voteOptionId = voteOptionId;
