@@ -1,8 +1,7 @@
 package com.moz1mozi.vstalkbackend.service;
 
-import com.moz1mozi.vstalkbackend.auth.UserSecurityService;
-import com.moz1mozi.vstalkbackend.dto.LoginRequest;
-import com.moz1mozi.vstalkbackend.utils.JwtUtil;
+import com.moz1mozi.vstalkbackend.common.auth.UserSecurityService;
+import com.moz1mozi.vstalkbackend.dto.auth.LoginRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
