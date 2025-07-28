@@ -10,6 +10,7 @@ import com.moz1mozi.vstalkbackend.common.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -22,6 +23,8 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResp
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -41,13 +44,16 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, JwtUtil jwtUtil, UserSecurityService userSecurityService) throws Exception {
         http
-            .cors(AbstractHttpConfigurer::disable)
-            .csrf(AbstractHttpConfigurer::disable)
+                .cors(withDefaults())         // CORS 필터 활성화
+                .csrf(AbstractHttpConfigurer::disable)
             .headers(headersConfigurer ->
                     headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
             .authorizeHttpRequests(request -> request
                     .requestMatchers("/api/v1/bookmark").authenticated()
-                            .anyRequest().permitAll())
+                    .requestMatchers("/api/vote/**").authenticated()
+                    .requestMatchers("/api/post/**").authenticated()
+                    .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                    .anyRequest().permitAll())
             .oauth2Login(oauth2 -> oauth2
                             .loginPage("/login")
                     .userInfoEndpoint(userInfo ->

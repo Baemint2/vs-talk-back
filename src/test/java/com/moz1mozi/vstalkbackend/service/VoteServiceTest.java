@@ -77,7 +77,6 @@ class VoteServiceTest {
 
         Category sports = Category.builder()
                 .name("sports")
-                .isDeleted(false)
                 .build();
 
         Category category = categoryRepository.save(sports);
@@ -149,7 +148,6 @@ class VoteServiceTest {
 
         Category sports = Category.builder()
                 .name("sports")
-                .isDeleted(false)
                 .build();
 
         Category category = categoryRepository.save(sports);

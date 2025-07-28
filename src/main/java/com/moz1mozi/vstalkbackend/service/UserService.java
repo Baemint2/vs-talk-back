@@ -5,11 +5,11 @@ import com.moz1mozi.vstalkbackend.entity.ProviderType;
 import com.moz1mozi.vstalkbackend.entity.Role;
 import com.moz1mozi.vstalkbackend.entity.User;
 import com.moz1mozi.vstalkbackend.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service

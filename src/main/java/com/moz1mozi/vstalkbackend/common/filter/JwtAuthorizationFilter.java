@@ -32,7 +32,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String token = resolveToken(request);
+        long start = System.currentTimeMillis(); // 시작 시간 측정을 여기로 이동
+
+        try {
+            String token = resolveToken(request);
 
         if (isExcludedPath(request.getRequestURI(), request.getMethod())) {
             chain.doFilter(request, response);
@@ -47,32 +50,41 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     String username = claims.getSubject();
                     log.info("Username from token: {}", username);
 
-                    UserDetails userDetails = userSecurityService.loadUserByUsername(username);
-                    UsernamePasswordAuthenticationToken authentication = getAuthentication(userDetails, request);
+                        UserDetails userDetails = userSecurityService.loadUserByUsername(username);
+                        UsernamePasswordAuthenticationToken authentication = getAuthentication(userDetails, request);
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    log.info("Invalid JWT token");
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    } else {
+                        log.info("Invalid JWT token");
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
+                        return;
+                    }
+                } catch (ExpiredJwtException ex) {
+                    log.info("Expired JWT token");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Expired JWT token");
+                    return;
+                } catch (Exception e) {
+                    log.error("JWT Authentication failed", e);
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT Authentication failed");
                     return;
                 }
-            } catch (ExpiredJwtException ex) {
-                log.info("Expired JWT token");
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Expired JWT token");
-                return;
-            } catch (Exception e) {
-                log.error("JWT Authentication failed", e);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT Authentication failed");
-                return;
+            } else {
+                log.info("Token is null");
+                if (!isTokenExcluded(request.getRequestURI())) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is null");
+                    return;
+                }
+                SecurityContextHolder.getContext();
             }
-        } else {
-            log.info("Token is null");
-            if (!isTokenExcluded(request.getRequestURI())) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is null");
-            }
-            SecurityContextHolder.getContext();
+
+            // 필터 체인 계속 진행
+            chain.doFilter(request, response);
+
+        } finally {
+            // 실행 시간 로그
+            long executionTime = System.currentTimeMillis() - start;
+            log.info("요청 [{}] 완료: 실행 시간 {} ms", request.getRequestURI(), executionTime);
         }
-        logRequestExecutionTime(request, chain, response);
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -106,16 +118,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return authentication;
     }
 
-    private void logRequestExecutionTime(HttpServletRequest request, FilterChain chain, HttpServletResponse response) throws IOException, ServletException {
-        long start = System.currentTimeMillis();
-        try {
-            chain.doFilter(request, response);
-        } finally {
-            long executionTime = System.currentTimeMillis() - start;
-            log.info("요청 [{}] 완료: 실행 시간 {} ms", request.getRequestURI(), executionTime);
-        }
-    }
-
     private boolean isExcludedPath(String requestURI, String method) {
         return requestURI.equals("/login") ||
                 requestURI.equals("/api/auth/logout/v1") ||
@@ -126,14 +128,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 requestURI.contains("/img/") ||
                 requestURI.contains("manifest") ||
                 requestURI.startsWith("/oauth2/authorization") ||  // OAuth2 로그인 요청 경로
-                requestURI.startsWith("/login/oauth2/code") ||
-                requestURI.startsWith("/api/post") ||
-                requestURI.startsWith("/api/vote");
+                requestURI.startsWith("/login/oauth2/code");
     }
 
     private boolean isTokenExcluded(String requestURI) {
-        return requestURI.equals("/api/v1/loginCheck") ||
-                requestURI.equals("/api/v1/userInfo") ||
+        return requestURI.equals("/api/v1/userInfo") ||
                 requestURI.equals("/api/v1/allUserJoke") ||
                 requestURI.equals("/api/v1/userJoke") ||
                 requestURI.startsWith("/api/post");
