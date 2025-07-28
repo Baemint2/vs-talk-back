@@ -69,8 +69,8 @@ public class PostService {
     }
 
     // 특정 카테고리에 속해있는 게시물 리스트만 가져오기
-    public List<PostDto> getPostListByCategory(String categoryName) {
-        List<Post> categoryPosts = postRepository.findByCategoryNameOrderByCreatedAtDesc(categoryName);
+    public List<PostDto> getPostListByCategory(String slug) {
+        List<Post> categoryPosts = postRepository.findByCategorySlugOrderByCreatedAtDesc(slug);
         return categoryPosts.stream().map(Post::toDto).toList();
     }
 }

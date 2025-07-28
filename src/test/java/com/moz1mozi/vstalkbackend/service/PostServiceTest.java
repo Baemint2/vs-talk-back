@@ -42,12 +42,10 @@ class PostServiceTest {
         // given
         Category sports = Category.builder()
                 .name("sports")
-                .isDeleted(false)
                 .build();
 
         Category foods = Category.builder()
                 .name("food")
-                .isDeleted(false)
                 .build();
 
         Category savedSports = categoryRepository.save(sports);

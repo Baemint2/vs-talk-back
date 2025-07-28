@@ -29,6 +29,11 @@ public class PostController {
         return postService.getPostList();
     }
 
+    @GetMapping("/get/category/{slug}")
+    public List<PostDto> getPostListByCategory(@PathVariable String slug) {
+        return postService.getPostListByCategory(slug);
+    }
+
     @GetMapping("/get/{postId}")
     public PostDto getPost(@PathVariable Long postId) {
         return postService.getPost(postId);

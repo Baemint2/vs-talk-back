@@ -8,5 +8,5 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByOrderByCreatedAtDesc();
 
-    List<Post> findByCategoryNameOrderByCreatedAtDesc(String categoryName);
+    List<Post> findByCategorySlugOrderByCreatedAtDesc(String slug);
 }
