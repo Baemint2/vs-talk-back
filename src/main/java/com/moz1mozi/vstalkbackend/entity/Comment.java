@@ -49,6 +49,18 @@ public class Comment extends BaseTimeEntity {
         this.parent = parent;
     }
 
+    public void updateContent(String newContent) {
+        if (isDeleted) {
+            throw new IllegalStateException("삭제된 댓글은 수정할 수 없습니다.");
+        }
+        this.content = newContent;
+    }
+
+    public void markAsDeleted() {
+        this.content = "삭제된 댓글입니다.";
+        this.isDeleted = true;
+    }
+
     public CommentDto toDto() {
         return CommentDto.builder()
                 .id(id)
@@ -57,6 +69,7 @@ public class Comment extends BaseTimeEntity {
                 .username(author.getUsername())
                 .parentId(parent != null ? parent.getId() : null)
                 .updatedAt(getUpdatedAt())
+                .isDeleted(isDeleted)
                 .build();
     }
 }

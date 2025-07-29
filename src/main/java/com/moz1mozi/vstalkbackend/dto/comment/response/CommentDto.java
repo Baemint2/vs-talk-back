@@ -13,15 +13,17 @@ public class CommentDto {
     private String username;
     private Long parentId;
     private LocalDateTime updatedAt;
+    private boolean isDeleted;
 
     @Builder
-    public CommentDto(Long id, String content, Long postId, String username, Long parentId, LocalDateTime updatedAt) {
+    public CommentDto(Long id, String content, Long postId, String username, Long parentId, LocalDateTime updatedAt, boolean isDeleted) {
         this.id = id;
         this.content = content;
         this.postId = postId;
         this.username = username;
         this.parentId = parentId;
         this.updatedAt = updatedAt;
+        this.isDeleted = isDeleted;
     }
 
     @Override

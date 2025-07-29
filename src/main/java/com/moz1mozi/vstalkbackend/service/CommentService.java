@@ -43,10 +43,37 @@ public class CommentService {
                 .build();
         Comment savedComment = commentRepository.save(comment);
 
+        post.incrementCommentCount();
+
         return savedComment.toDto();
     }
 
     public void removeComment(Long commentId) {
-        commentRepository.deleteById(commentId);
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+
+        comment.markAsDeleted();
+
+//        commentRepository.deleteById(commentId);
     }
+
+    public CommentDto updateCount(Long commnetId, String newContent, String username) {
+        Comment comment = commentRepository.findById(commnetId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니디."));
+
+        // 삭제된 댓글은 수정 불가
+        if (comment.isDeleted()) {
+            throw new IllegalArgumentException("삭제된 댓글은 수정할 수 없습니다.");
+        }
+
+        User user = userService.findByUsername(username);
+        if (!comment.getAuthor().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("댓글 수정 권한이 없습니다.");
+        }
+
+        comment.updateContent(newContent);
+        return comment.toDto();
+
+    }
+
 }

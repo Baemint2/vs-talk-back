@@ -1,5 +1,6 @@
 package com.moz1mozi.vstalkbackend.controller;
 
+import com.moz1mozi.vstalkbackend.dto.UpdateCommentDto;
 import com.moz1mozi.vstalkbackend.dto.comment.request.CommentCreateDto;
 import com.moz1mozi.vstalkbackend.dto.comment.response.CommentDto;
 import com.moz1mozi.vstalkbackend.service.CommentService;
@@ -30,9 +31,17 @@ public class CommentController {
         return ResponseEntity.ok(commentService.saveComment(dto, username));
     }
 
-    @DeleteMapping("/delete/{commentId}")
+    @DeleteMapping("/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Long commentId) {
         commentService.removeComment(commentId);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{commentId}")
+    public ResponseEntity<?> updateComment(@PathVariable Long commentId,
+                                           @RequestBody UpdateCommentDto dto) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        CommentDto commentDto = commentService.updateCount(commentId, dto.getContent(), username);
+        return ResponseEntity.ok(commentDto);
     }
 }
