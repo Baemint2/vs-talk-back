@@ -17,7 +17,9 @@ public class PostDto {
     private String content;
     private String categoryName;
     private String videoId;
+    private String author;
     private List<VoteOptionDto> voteOptionList;
+    private long commentCount;
     private boolean isSecret;
     private boolean isDeleted;
     private boolean voteEnabled;

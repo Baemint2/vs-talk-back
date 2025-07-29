@@ -31,10 +31,10 @@ public class Post extends BaseTimeEntity {
     // 비밀글
     private boolean isSecret;
 
-    private int viewCount;
-    private int likeCount;
-    private int dislikeCount;
-    private int commentCount;
+    private long viewCount;
+    private long likeCount;
+    private long dislikeCount;
+    private long commentCount;
 
     // 투표 활성화 여부
     private boolean voteEnabled = false;
@@ -56,7 +56,7 @@ public class Post extends BaseTimeEntity {
     private List<Vote> votes;
 
     @Builder
-    public Post(Long id, String title, String content, String videoId, boolean isDeleted, boolean isSecret, int viewCount, int likeCount, int dislikeCount, int commentCount, boolean voteEnabled, LocalDateTime voteEndTime, User author, Category category, List<Comment> comments, List<Vote> votes) {
+    public Post(Long id, String title, String content, String videoId, boolean isDeleted, boolean isSecret, long viewCount, long likeCount, long dislikeCount, long commentCount, boolean voteEnabled, LocalDateTime voteEndTime, User author, Category category, List<Comment> comments, List<Vote> votes) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -75,13 +75,23 @@ public class Post extends BaseTimeEntity {
         this.votes = votes;
     }
 
+    public void incrementCommentCount() {
+        this.commentCount++;
+    }
+
+    public void decrementCommentCount() {
+        if (this.commentCount > 0) this.commentCount--;
+    }
+
     public PostDto toDto() {
         return PostDto.builder()
                 .id(id)
                 .title(title)
                 .content(content)
                 .categoryName(category.getName())
+                .commentCount(commentCount)
                 .videoId(videoId)
+                .author(author.getUsername())
                 .updatedAt(getUpdatedAt())
                 .build();
     }

@@ -63,8 +63,13 @@ public class PostService {
         return dto;
     }
 
-    public List<PostDto> getPostList() {
-        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();
+    public List<PostDto> getPostList(String orderCondition ) {
+        List<Post> posts;
+        if ( orderCondition != null && orderCondition.equals("asc")) {
+            posts = postRepository.findAllByOrderByCreatedAtAsc();
+        } else {
+            posts = postRepository.findAllByOrderByCreatedAtDesc();
+        }
         return posts.stream().map(Post::toDto).toList();
     }
 
@@ -72,5 +77,11 @@ public class PostService {
     public List<PostDto> getPostListByCategory(String slug) {
         List<Post> categoryPosts = postRepository.findByCategorySlugOrderByCreatedAtDesc(slug);
         return categoryPosts.stream().map(Post::toDto).toList();
+    }
+
+    // 검색 메서드
+    public List<PostDto> searchPost(String keyword) {
+        List<Post> searchPosts = postRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(keyword);
+        return searchPosts.stream().map(Post::toDto).toList();
     }
 }

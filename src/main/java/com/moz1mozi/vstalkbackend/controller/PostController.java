@@ -25,8 +25,8 @@ public class PostController {
     }
 
     @GetMapping("/get")
-    public List<PostDto> getPostList() {
-        return postService.getPostList();
+    public List<PostDto> getPostList(@RequestParam(required = false) String orderBy) {
+        return postService.getPostList(orderBy);
     }
 
     @GetMapping("/get/category/{slug}")
@@ -37,5 +37,11 @@ public class PostController {
     @GetMapping("/get/{postId}")
     public PostDto getPost(@PathVariable Long postId) {
         return postService.getPost(postId);
+    }
+
+    @GetMapping("/get/search")
+    public List<PostDto> getSearchPostList(@RequestParam(required = false) String orderBy,
+                                           @RequestParam String title) {
+        return postService.searchPost(title);
     }
 }
