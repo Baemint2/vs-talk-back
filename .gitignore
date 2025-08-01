@@ -8,6 +8,7 @@ build/
 ### Properties ###
 
 **/src/main/resources/info.yml
+**/src/main/resources/application-prd.yml
 
 ### STS ###
 .apt_generated
