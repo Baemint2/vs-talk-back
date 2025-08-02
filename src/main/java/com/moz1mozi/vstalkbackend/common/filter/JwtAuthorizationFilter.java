@@ -128,13 +128,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 requestURI.contains("/img/") ||
                 requestURI.contains("manifest") ||
                 requestURI.startsWith("/oauth2/authorization") ||  // OAuth2 로그인 요청 경로
-                requestURI.startsWith("/login/oauth2/code");
+                requestURI.startsWith("/login/oauth2/code") ||
+                requestURI.equals("/api/v1/loginCheck") ||
+                requestURI.startsWith("/api/category") ||
+                requestURI.startsWith("/api/post") ||
+                requestURI.startsWith("/api/comment");
     }
 
     private boolean isTokenExcluded(String requestURI) {
         return requestURI.equals("/api/v1/userInfo") ||
                 requestURI.equals("/api/v1/allUserJoke") ||
                 requestURI.equals("/api/v1/userJoke") ||
-                requestURI.startsWith("/api/post");
+                requestURI.startsWith("/api/post") ||
+                requestURI.equals("/api/v1/loginCheck");
     }
 }
