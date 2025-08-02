@@ -83,6 +83,19 @@ public class Post extends BaseTimeEntity {
         if (this.commentCount > 0) this.commentCount--;
     }
 
+    public void changeDeleted() {
+        this.isDeleted = true;
+    }
+
+    public void updatePost(String title, String content, String videoId, boolean isDeleted, boolean isSecret, Category category) {
+        this.title = title;
+        this.content = content;
+        this.videoId = videoId;
+        this.isDeleted = isDeleted;
+        this.isSecret = isSecret;
+        this.category = category;
+    }
+
     public PostDto toDto() {
         return PostDto.builder()
                 .id(id)
@@ -93,6 +106,7 @@ public class Post extends BaseTimeEntity {
                 .videoId(videoId)
                 .author(author.getUsername())
                 .updatedAt(getUpdatedAt())
+                .isDeleted(isDeleted)
                 .build();
     }
 }

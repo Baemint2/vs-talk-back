@@ -1,19 +1,20 @@
 package com.moz1mozi.vstalkbackend.service;
 
 import com.moz1mozi.vstalkbackend.dto.post.request.PostCreateDto;
+import com.moz1mozi.vstalkbackend.dto.post.request.PostUpdateDto;
 import com.moz1mozi.vstalkbackend.dto.post.response.PostDto;
 import com.moz1mozi.vstalkbackend.dto.user.request.UserCreateDto;
 import com.moz1mozi.vstalkbackend.dto.vote.request.VoteOptionCreateDto;
 import com.moz1mozi.vstalkbackend.entity.Category;
 import com.moz1mozi.vstalkbackend.entity.User;
 import com.moz1mozi.vstalkbackend.repository.CategoryRepository;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -97,4 +98,115 @@ class PostServiceTest {
         System.out.println(postListByCategory);
         assertThat(postListByCategory).hasSize(25);
     }
+
+    @DisplayName("특정 게시물을 삭제합니다.")
+    @Test
+    void deletePost() {
+        // given
+        Category foods = Category.builder()
+                .name("food")
+                .build();
+
+        Category savedFood = categoryRepository.save(foods);
+
+        UserCreateDto userCreateDto = UserCreateDto.builder()
+                .username("testUser")
+                .password(passwordEncoder.encode("password"))
+                .nickname("testNickname")
+                .build();
+
+        User user = userService.createUser(userCreateDto);
+
+        String username = user.getUsername();
+
+        VoteOptionCreateDto firstOption = VoteOptionCreateDto.builder()
+                .optionText("test option 1")
+                .build();
+
+        VoteOptionCreateDto secondOption = VoteOptionCreateDto.builder()
+                .optionText("test option 2")
+                .build();
+
+        PostCreateDto post = PostCreateDto.builder()
+                .title("test title")
+                .content("test content")
+                .videoId("test videoId")
+                .isSecret(false)
+                .username(username)
+                .categoryId(savedFood.getId())
+                .voteEnabled(true)
+                .voteOptions(List.of(firstOption, secondOption))
+                .build();
+
+        Long post1 = postService.createPost(post);
+
+        // when // then
+        postService.deletePost(post1);
+
+        PostDto post2 = postService.getPost(post1);
+        assertThat(post2).isNotNull();
+        assertThat(post2.isDeleted()).isTrue();
+    }
+
+    @DisplayName("특정 게시물을 수정합니다.")
+    @Test
+    void updatePost() {
+        // given
+        Category sports = Category.builder()
+                .name("sports")
+                .build();
+
+        Category foods = Category.builder()
+                .name("food")
+                .build();
+
+        Category savedSports = categoryRepository.save(sports);
+
+        Category savedFood = categoryRepository.save(foods);
+
+        UserCreateDto userCreateDto = UserCreateDto.builder()
+                .username("testUser")
+                .password(passwordEncoder.encode("password"))
+                .nickname("testNickname")
+                .build();
+
+        User user = userService.createUser(userCreateDto);
+
+        String username = user.getUsername();
+
+        VoteOptionCreateDto firstOption = VoteOptionCreateDto.builder()
+                .optionText("test option 1")
+                .build();
+
+        VoteOptionCreateDto secondOption = VoteOptionCreateDto.builder()
+                .optionText("test option 2")
+                .build();
+
+        PostCreateDto post = PostCreateDto.builder()
+                .title("test title")
+                .content("test content")
+                .videoId("test videoId")
+                .isSecret(false)
+                .username(username)
+                .categoryId(savedFood.getId())
+                .voteEnabled(true)
+                .voteOptions(List.of(firstOption, secondOption))
+                .build();
+
+        Long post1 = postService.createPost(post);
+        PostUpdateDto updateDto = PostUpdateDto.builder()
+                .title("modified title")
+                .content("modified content")
+                .categoryId(savedSports.getId())
+                .build();
+        // when
+        postService.updatePost(post1, updateDto);
+
+        // then
+        PostDto postDto = postService.getPost(post1);
+        assertThat(postDto)
+                .extracting(PostDto::getTitle, PostDto::getContent, PostDto::getCategoryName)
+                .containsExactly("modified title", "modified content", "sports");
+    }
+
 }

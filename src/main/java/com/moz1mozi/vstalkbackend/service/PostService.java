@@ -1,5 +1,7 @@
 package com.moz1mozi.vstalkbackend.service;
 
+import com.moz1mozi.vstalkbackend.common.EntityFinder;
+import com.moz1mozi.vstalkbackend.dto.post.request.PostUpdateDto;
 import com.moz1mozi.vstalkbackend.dto.vote.response.VoteOptionDto;
 import com.moz1mozi.vstalkbackend.dto.post.request.PostCreateDto;
 import com.moz1mozi.vstalkbackend.dto.post.response.PostDto;
@@ -11,12 +13,14 @@ import com.moz1mozi.vstalkbackend.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostService {
 
     private final PostRepository postRepository;
@@ -50,14 +54,11 @@ public class PostService {
     }
 
     public Post getPostId(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
+        return getOrThrow(postId);
     }
 
     public PostDto getPost(Long postId) {
-        PostDto dto = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다.")).toDto();
-
+        PostDto dto = getOrThrow(postId).toDto();
         List<VoteOptionDto> voteOption = voteOptionService.getVoteOption(postId).stream().map(VoteOption::toDto).toList();
         dto.setVoteOptionList(voteOption);
         return dto;
@@ -74,6 +75,7 @@ public class PostService {
     }
 
     // 특정 카테고리에 속해있는 게시물 리스트만 가져오기
+
     public List<PostDto> getPostListByCategory(String slug) {
         List<Post> categoryPosts = postRepository.findByCategorySlugOrderByCreatedAtDesc(slug);
         return categoryPosts.stream().map(Post::toDto).toList();
@@ -83,5 +85,30 @@ public class PostService {
     public List<PostDto> searchPost(String keyword) {
         List<Post> searchPosts = postRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(keyword);
         return searchPosts.stream().map(Post::toDto).toList();
+    }
+
+    // 게시글 삭제
+    public void deletePost(Long postId) {
+        Post post = getOrThrow(postId);
+
+        post.changeDeleted();
+    }
+
+    // 게시글 수정
+    public void updatePost(Long postId, PostUpdateDto dto) {
+        Post post = getOrThrow(postId);
+        Category category = categoryService.getCategory(dto.getCategoryId());
+
+        post.updatePost(dto.getTitle(),
+                        dto.getContent(),
+                        dto.getVideoId(),
+                        dto.isDeleted(),
+                        dto.isSecret(),
+                        category);
+
+    }
+
+    private Post getOrThrow(Long postId) {
+        return EntityFinder.findOrThrow(postRepository, postId, "존재하지 않는 게시글입니다.");
     }
 }
