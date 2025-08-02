@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,11 +23,12 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User findByUsername(String username){
-        log.info("username: {}", username);
-        return userRepository.findByProviderKey(username)
-                .or(() -> userRepository.findByUsername(username))
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        // 1. provider_key로 먼저 조회
+        Optional<User> byProviderKey = userRepository.findByProviderKey(username);
+        return byProviderKey.orElseGet(() -> userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다.")));
     }
+
 
     public User saveUserIfNotExist(String providerId, String email, String nickname, String profile, ProviderType providerType) {
         log.info("[saveUserIfNotExist] providerId: {}", providerId);

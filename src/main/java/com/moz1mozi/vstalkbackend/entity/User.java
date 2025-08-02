@@ -78,6 +78,7 @@ public class User extends BaseTimeEntity {
                 .nickname(nickname)
                 .profile(profile)
                 .providerKey(providerKey)
+                .role(role)
                 .build();
     }
 

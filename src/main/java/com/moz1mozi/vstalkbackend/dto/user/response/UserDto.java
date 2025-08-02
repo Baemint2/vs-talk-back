@@ -1,5 +1,6 @@
 package com.moz1mozi.vstalkbackend.dto.user.response;
 
+import com.moz1mozi.vstalkbackend.entity.Role;
 import com.moz1mozi.vstalkbackend.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class UserDto {
     private String password;
     private String providerKey;
     private String accessToken;
+    private Role role;
 
     public User toEntity() {
         return User.builder()
