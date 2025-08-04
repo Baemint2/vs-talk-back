@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class VoteOptionCreateDto {
+    private Long id;
     private String optionText;
     private String color;
 

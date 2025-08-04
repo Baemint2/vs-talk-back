@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
@@ -21,22 +23,24 @@ public class VoteOptionService {
     private final VoteOptionRepository voteOptionRepository;
 
     public List<VoteOption> createVoteOptions(Post post, List<VoteOptionCreateDto> optionDtos) {
-        List<VoteOption> voteOptions = new ArrayList<>();
+        int existingCount = voteOptionRepository.countByPost(post);
+        AtomicInteger orderCounter = new AtomicInteger(existingCount);
 
-        for (int i = 0; i < optionDtos.size(); i++) {
-            VoteOptionCreateDto optionDto = optionDtos.get(i);
+        List<VoteOption> newVoteOptions = optionDtos.stream()
+                .filter(dto -> dto.getId() == null)
+                .map(dto -> VoteOption.builder()
+                        .post(post)
+                        .optionText(dto.getOptionText())
+                        .displayOrder(orderCounter.incrementAndGet())
+                        .color(dto.getColor() != null ? dto.getColor() : generateDefaultColor(0))
+                        .build())
+                .toList();
 
-            VoteOption voteOption = VoteOption.builder()
-                    .post(post)
-                    .optionText(optionDto.getOptionText())
-                    .displayOrder(i + 1)
-                    .color(optionDto.getColor() != null ? optionDto.getColor() : generateDefaultColor(i))
-                    .build();
-
-            voteOptions.add(voteOption);
+        if (newVoteOptions.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        return voteOptionRepository.saveAll(voteOptions);
+        return voteOptionRepository.saveAll(newVoteOptions);
     }
 
     private String generateDefaultColor(int index) {
