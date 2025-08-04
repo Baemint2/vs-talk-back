@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,22 +32,18 @@ public class UserController {
     @GetMapping("/api/v1/userInfo")
     public ResponseEntity<?> getUserInfo(Principal principal) {
 
-        if(principal == null) {
-            return ResponseEntity.ok().build();
-        }
-
         UserDto byUsername = userService.findByUsername(principal.getName()).toDto();
         return ResponseEntity.ok(byUsername);
     }
 
     @GetMapping("/api/v1/loginCheck")
-    public Boolean loginCheck(Principal principal) {
-
-        if(principal == null) {
+    public Boolean loginCheck() {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(name == null) {
             return false;
         }
 
-        UserDto user = userService.findByUsername(principal.getName()).toDto();
+        UserDto user = userService.findByUsername(name).toDto();
         log.info("loginCheck: {}", user != null);
         return user != null;
     }
