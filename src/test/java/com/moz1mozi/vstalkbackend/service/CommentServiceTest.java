@@ -90,7 +90,7 @@ class CommentServiceTest {
                 .voteOptions(List.of(firstOption, secondOption))
                 .build();
 
-        Long postId = postService.createPost(post);
+        Long postId = postService.createPost(post,  username);
 
         voteOptionService.createVoteOptions(postService.getPostId(postId), List.of(firstOption, secondOption));
 
@@ -151,7 +151,7 @@ class CommentServiceTest {
                 .voteOptions(List.of(firstOption, secondOption))
                 .build();
 
-        Long postId = postService.createPost(post);
+        Long postId = postService.createPost(post, username);
 
         List<Long> parentCommentIds = new ArrayList<>();
 

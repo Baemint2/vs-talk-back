@@ -12,6 +12,7 @@ import com.moz1mozi.vstalkbackend.entity.VoteOption;
 import com.moz1mozi.vstalkbackend.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +29,9 @@ public class PostService {
     private final CategoryService categoryService;
     private final VoteOptionService voteOptionService;
 
-    public Long createPost(PostCreateDto dto) {
+    public Long createPost(PostCreateDto dto, String username) {
 
-        User byUsername = userService.findByUsername(dto.getUsername());
+        User byUsername = userService.findByUsername(username);
 
         Category category = categoryService.getCategory(dto.getCategoryId());
 
@@ -67,9 +68,9 @@ public class PostService {
     public List<PostDto> getPostList(String orderCondition ) {
         List<Post> posts;
         if ( orderCondition != null && orderCondition.equals("asc")) {
-            posts = postRepository.findAllByOrderByCreatedAtAsc();
+            posts = postRepository.findByIsDeletedFalse(Sort.by(Sort.Direction.ASC, "createdAt"));
         } else {
-            posts = postRepository.findAllByOrderByCreatedAtDesc();
+            posts = postRepository.findByIsDeletedFalse(Sort.by(Sort.Direction.DESC, "createdAt"));
         }
         return posts.stream().map(Post::toDto).toList();
     }
@@ -77,13 +78,13 @@ public class PostService {
     // 특정 카테고리에 속해있는 게시물 리스트만 가져오기
 
     public List<PostDto> getPostListByCategory(String slug) {
-        List<Post> categoryPosts = postRepository.findByCategorySlugOrderByCreatedAtDesc(slug);
+        List<Post> categoryPosts = postRepository.findByCategorySlugAndIsDeletedFalse(slug, Sort.by(Sort.Direction.DESC, "createdAt"));
         return categoryPosts.stream().map(Post::toDto).toList();
     }
 
     // 검색 메서드
     public List<PostDto> searchPost(String keyword) {
-        List<Post> searchPosts = postRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(keyword);
+        List<Post> searchPosts = postRepository.findByTitleContainingIgnoreCaseAndIsDeletedFalse(keyword, Sort.by(Sort.Direction.DESC, "createdAt"));
         return searchPosts.stream().map(Post::toDto).toList();
     }
 
@@ -106,6 +107,9 @@ public class PostService {
                         dto.isSecret(),
                         category);
 
+        if (dto.hasVoteOptions()) {
+            voteOptionService.createVoteOptions(post, dto.getVoteOptions());
+        }
     }
 
     private Post getOrThrow(Long postId) {

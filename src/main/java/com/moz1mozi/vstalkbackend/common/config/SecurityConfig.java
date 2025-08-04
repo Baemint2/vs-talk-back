@@ -49,9 +49,6 @@ public class SecurityConfig {
             .headers(headersConfigurer ->
                     headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
             .authorizeHttpRequests(request -> request
-                    .requestMatchers("/api/v1/bookmark").authenticated()
-                    .requestMatchers("/api/vote/**").authenticated()
-                    .requestMatchers("/api/post/**").authenticated()
                     .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
                     .anyRequest().permitAll())
             .oauth2Login(oauth2 -> oauth2

@@ -88,7 +88,7 @@ class PostServiceTest {
                     .voteEnabled(true)
                     .voteOptions(List.of(firstOption, secondOption))
                     .build();
-            postService.createPost(post);
+            postService.createPost(post, username);
         }
 
         // when
@@ -138,7 +138,7 @@ class PostServiceTest {
                 .voteOptions(List.of(firstOption, secondOption))
                 .build();
 
-        Long post1 = postService.createPost(post);
+        Long post1 = postService.createPost(post, username);
 
         // when // then
         postService.deletePost(post1);
@@ -193,7 +193,7 @@ class PostServiceTest {
                 .voteOptions(List.of(firstOption, secondOption))
                 .build();
 
-        Long post1 = postService.createPost(post);
+        Long post1 = postService.createPost(post, username);
         PostUpdateDto updateDto = PostUpdateDto.builder()
                 .title("modified title")
                 .content("modified content")

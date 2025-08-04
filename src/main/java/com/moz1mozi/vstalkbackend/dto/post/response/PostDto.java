@@ -15,6 +15,7 @@ public class PostDto {
     private Long id;
     private String title;
     private String content;
+    private Long categoryId;
     private String categoryName;
     private String videoId;
     private String author;

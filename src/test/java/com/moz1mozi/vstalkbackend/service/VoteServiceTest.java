@@ -100,7 +100,7 @@ class VoteServiceTest {
                 .voteOptions(List.of(firstOption, secondOption))
                 .build();
 
-        Long postId = postService.createPost(post);
+        Long postId = postService.createPost(post, username);
 
         List<VoteOption> voteOptions = voteOptionService.createVoteOptions(postService.getPostId(postId), List.of(firstOption, secondOption));
 
@@ -171,7 +171,7 @@ class VoteServiceTest {
                 .voteOptions(List.of(firstOption, secondOption))
                 .build();
 
-        Long postId = postService.createPost(post);
+        Long postId = postService.createPost(post, username);
 
         List<VoteOption> voteOptions = voteOptionService.createVoteOptions(postService.getPostId(postId), List.of(firstOption, secondOption));
 

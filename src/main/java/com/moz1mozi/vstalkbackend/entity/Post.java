@@ -84,6 +84,7 @@ public class Post extends BaseTimeEntity {
     }
 
     public void changeDeleted() {
+        this.title = "삭제된 게시글입니다.";
         this.isDeleted = true;
     }
 
@@ -101,6 +102,7 @@ public class Post extends BaseTimeEntity {
                 .id(id)
                 .title(title)
                 .content(content)
+                .categoryId(category.getId())
                 .categoryName(category.getName())
                 .commentCount(commentCount)
                 .videoId(videoId)

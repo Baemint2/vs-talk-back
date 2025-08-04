@@ -6,7 +6,9 @@ import com.moz1mozi.vstalkbackend.dto.post.response.PostDto;
 import com.moz1mozi.vstalkbackend.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +23,11 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Long> createPost(@RequestBody PostCreateDto dto) {
-        Long post = postService.createPost(dto);
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (name.equals("anonymousUser")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Long post = postService.createPost(dto, name);
         return ResponseEntity.ok(post);
     }
 

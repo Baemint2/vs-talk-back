@@ -70,7 +70,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 }
             } else {
                 log.info("Token is null");
-                if (!isTokenExcluded(request.getRequestURI())) {
+                if (!isTokenExcluded(request.getRequestURI(), request.getMethod())) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is null");
                     return;
                 }
@@ -128,18 +128,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 requestURI.contains("/img/") ||
                 requestURI.contains("manifest") ||
                 requestURI.startsWith("/oauth2/authorization") ||  // OAuth2 로그인 요청 경로
-                requestURI.startsWith("/login/oauth2/code") ||
-                requestURI.equals("/api/v1/loginCheck") ||
-                requestURI.startsWith("/api/category") ||
-                requestURI.startsWith("/api/post") ||
-                requestURI.startsWith("/api/comment");
+                requestURI.startsWith("/login/oauth2/code");
     }
 
-    private boolean isTokenExcluded(String requestURI) {
-        return requestURI.equals("/api/v1/userInfo") ||
-                requestURI.equals("/api/v1/allUserJoke") ||
-                requestURI.equals("/api/v1/userJoke") ||
-                requestURI.startsWith("/api/post") ||
-                requestURI.equals("/api/v1/loginCheck");
+    private boolean isTokenExcluded(String requestURI, String method) {
+        // ✅ 로그인 없이 허용할 GET 요청
+        if (requestURI.startsWith("/api/post") && "GET".equalsIgnoreCase(method)) {
+            return true;
+        }
+
+        // ✅ 기타 로그인 없이 허용할 엔드포인트
+        return requestURI.startsWith("/api/category");
     }
 }
