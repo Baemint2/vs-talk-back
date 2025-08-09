@@ -3,3 +3,8 @@ spring:
     name: vs-talk-backend
   config:
     import: 'classpath:info.yml'
+
+# swagger-ui custom path
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

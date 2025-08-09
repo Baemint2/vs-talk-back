@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,6 +52,12 @@ public class VoteOptionService {
 
     public List<VoteOption> getVoteOption(Long postId) {
         return voteOptionRepository.findAllByPostId(postId);
+    }
+
+    public void removeVoteOption(List<Long> ids) {
+        for (Long id : ids) {
+            voteOptionRepository.deleteById(id);
+        }
     }
 
 }

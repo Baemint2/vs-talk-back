@@ -1,5 +1,6 @@
 package com.moz1mozi.vstalkbackend.dto.post.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.moz1mozi.vstalkbackend.dto.vote.response.VoteOptionDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +25,8 @@ public class PostDto {
     private boolean isSecret;
     private boolean isDeleted;
     private boolean voteEnabled;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime voteEndTime;
     private LocalDateTime updatedAt;
 
     @Override

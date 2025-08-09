@@ -1,9 +1,11 @@
 package com.moz1mozi.vstalkbackend.dto.post.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.moz1mozi.vstalkbackend.dto.vote.request.VoteOptionCreateDto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,6 +18,8 @@ public class PostCreateDto {
     private boolean isSecret;
     private boolean isDeleted;
     private boolean voteEnabled;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime voteEndTime;
     private String voteTitle;
     private List<VoteOptionCreateDto> voteOptions;
     private String username;

@@ -3,7 +3,9 @@ package com.moz1mozi.vstalkbackend.repository;
 import com.moz1mozi.vstalkbackend.entity.Post;
 import com.moz1mozi.vstalkbackend.entity.VoteOption;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VoteOptionRepository extends JpaRepository<VoteOption, Long> {

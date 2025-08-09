@@ -32,8 +32,6 @@ public class Post extends BaseTimeEntity {
     private boolean isSecret;
 
     private long viewCount;
-    private long likeCount;
-    private long dislikeCount;
     private long commentCount;
 
     // 투표 활성화 여부
@@ -56,7 +54,7 @@ public class Post extends BaseTimeEntity {
     private List<Vote> votes;
 
     @Builder
-    public Post(Long id, String title, String content, String videoId, boolean isDeleted, boolean isSecret, long viewCount, long likeCount, long dislikeCount, long commentCount, boolean voteEnabled, LocalDateTime voteEndTime, User author, Category category, List<Comment> comments, List<Vote> votes) {
+    public Post(Long id, String title, String content, String videoId, boolean isDeleted, boolean isSecret, long viewCount, long commentCount, boolean voteEnabled, LocalDateTime voteEndTime, User author, Category category, List<Comment> comments, List<Vote> votes) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -64,8 +62,6 @@ public class Post extends BaseTimeEntity {
         this.isDeleted = isDeleted;
         this.isSecret = isSecret;
         this.viewCount = viewCount;
-        this.likeCount = likeCount;
-        this.dislikeCount = dislikeCount;
         this.commentCount = commentCount;
         this.voteEnabled = voteEnabled;
         this.voteEndTime = voteEndTime;
@@ -88,12 +84,13 @@ public class Post extends BaseTimeEntity {
         this.isDeleted = true;
     }
 
-    public void updatePost(String title, String content, String videoId, boolean isDeleted, boolean isSecret, Category category) {
+    public void updatePost(String title, String content, String videoId, boolean isDeleted, boolean isSecret, Category category, LocalDateTime voteEndTime) {
         this.title = title;
         this.content = content;
         this.videoId = videoId;
         this.isDeleted = isDeleted;
         this.isSecret = isSecret;
+        this.voteEndTime = voteEndTime;
         this.category = category;
     }
 
@@ -108,6 +105,8 @@ public class Post extends BaseTimeEntity {
                 .videoId(videoId)
                 .author(author.getUsername())
                 .updatedAt(getUpdatedAt())
+                .voteEnabled(voteEnabled)
+                .voteEndTime(voteEndTime)
                 .isDeleted(isDeleted)
                 .build();
     }

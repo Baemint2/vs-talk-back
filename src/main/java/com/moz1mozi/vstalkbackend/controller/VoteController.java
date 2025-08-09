@@ -2,6 +2,7 @@ package com.moz1mozi.vstalkbackend.controller;
 
 import com.moz1mozi.vstalkbackend.dto.vote.request.VoteCreateDto;
 import com.moz1mozi.vstalkbackend.service.VoteService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -10,13 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/vote")
+@RequestMapping("/api/votes")
 @RequiredArgsConstructor
+@Tag(name = "Vote", description = "투표 CRUD")
 public class VoteController {
 
     private final VoteService voteService;
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<?> selectVote(@RequestBody VoteCreateDto voteCreateDto) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         voteService.vote(voteCreateDto, username);

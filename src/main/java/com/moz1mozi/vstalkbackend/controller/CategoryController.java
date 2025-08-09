@@ -1,10 +1,14 @@
 package com.moz1mozi.vstalkbackend.controller;
 
+import com.moz1mozi.vstalkbackend.ApiResponse;
 import com.moz1mozi.vstalkbackend.dto.category.request.CategoryCreateDto;
 import com.moz1mozi.vstalkbackend.dto.category.response.CategoryDto;
 import com.moz1mozi.vstalkbackend.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,25 +16,29 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/categories")
 @RequiredArgsConstructor
+@Tag(name = "Category", description = "카테고리 CRUD")
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @GetMapping("/all")
-    public List<CategoryDto> findAllCategoryName(){
-        return categoryService.findAllCategoryName();
+    @Operation(summary = "카테고리 조회")
+    @GetMapping
+    public ApiResponse<List<CategoryDto>> findAllCategoryName(){
+        return ApiResponse.ok(categoryService.findAllCategoryName());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addCategory(@RequestBody CategoryCreateDto dto) {
-        return ResponseEntity.ok(categoryService.createCategory(dto));
+    @Operation(summary = "카테고리 생성")
+    @PostMapping
+    public ApiResponse<?> addCategory(@RequestBody CategoryCreateDto dto) {
+        return ApiResponse.ok(categoryService.createCategory(dto));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+    @Operation(summary = "카테고리 삭제")
+    @DeleteMapping("/{id}")
+    public ApiResponse<?> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
-        return ResponseEntity.ok().build();
+        return ApiResponse.of(HttpStatus.NO_CONTENT, null);
     }
 }

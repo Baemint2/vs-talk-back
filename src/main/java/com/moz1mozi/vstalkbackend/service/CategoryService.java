@@ -7,6 +7,7 @@ import com.moz1mozi.vstalkbackend.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public List<CategoryDto> findAllCategoryName(){
+    public List<CategoryDto> findAllCategoryName() {
         return categoryRepository.findAllByOrderByIdAsc()
                 .stream()
                 .map(Category::toDto)
@@ -41,5 +42,6 @@ public class CategoryService {
 
     public void deleteCategory(Long id) {
         categoryRepository.deleteById(id);
+        categoryRepository.flush();
     }
 }

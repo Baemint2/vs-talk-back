@@ -1,6 +1,7 @@
 package com.moz1mozi.vstalkbackend.service;
 
 import com.moz1mozi.vstalkbackend.common.EntityFinder;
+import com.moz1mozi.vstalkbackend.dto.post.PostSort;
 import com.moz1mozi.vstalkbackend.dto.post.request.PostUpdateDto;
 import com.moz1mozi.vstalkbackend.dto.vote.response.VoteOptionDto;
 import com.moz1mozi.vstalkbackend.dto.post.request.PostCreateDto;
@@ -10,12 +11,17 @@ import com.moz1mozi.vstalkbackend.entity.Post;
 import com.moz1mozi.vstalkbackend.entity.User;
 import com.moz1mozi.vstalkbackend.entity.VoteOption;
 import com.moz1mozi.vstalkbackend.repository.PostRepository;
+import io.micrometer.common.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -43,6 +49,7 @@ public class PostService {
                 .author(byUsername)
                 .category(category)
                 .voteEnabled(dto.isVoteEnabled())
+                .voteEndTime(dto.getVoteEndTime())
                 .build();
 
         Post savedPost = postRepository.save(post);
@@ -65,18 +72,19 @@ public class PostService {
         return dto;
     }
 
-    public List<PostDto> getPostList(String orderCondition ) {
-        List<Post> posts;
-        if ( orderCondition != null && orderCondition.equals("asc")) {
-            posts = postRepository.findByIsDeletedFalse(Sort.by(Sort.Direction.ASC, "createdAt"));
-        } else {
-            posts = postRepository.findByIsDeletedFalse(Sort.by(Sort.Direction.DESC, "createdAt"));
-        }
-        return posts.stream().map(Post::toDto).toList();
+    public List<PostDto> getPostList(String orderby) {
+        LocalDateTime now = LocalDateTime.now();
+        // range: "24h", "7d", "all" 등 기간 필터(옵션)
+        PostSort sort = PostSort.from(orderby);
+        return switch (sort) {
+            case CREATED_ASC  -> postRepository.findByIsDeletedFalse(Sort.by("createdAt").ascending()).stream().map(Post::toDto).toList();
+            case CREATED_DESC -> postRepository.findByIsDeletedFalse((Sort.by("createdAt").descending())).stream().map(Post::toDto).toList();
+            case VOTES_DESC   -> postRepository.findTopVotedPosts().stream().map(Post::toDto).toList();
+            case ENDING_SOON  -> postRepository.findVoteActivePosts(now).stream().map(Post::toDto).toList();
+        };
     }
 
     // 특정 카테고리에 속해있는 게시물 리스트만 가져오기
-
     public List<PostDto> getPostListByCategory(String slug) {
         List<Post> categoryPosts = postRepository.findByCategorySlugAndIsDeletedFalse(slug, Sort.by(Sort.Direction.DESC, "createdAt"));
         return categoryPosts.stream().map(Post::toDto).toList();
@@ -100,12 +108,17 @@ public class PostService {
         Post post = getOrThrow(postId);
         Category category = categoryService.getCategory(dto.getCategoryId());
 
+        boolean voteEnabled = post.isVoteEnabled();
+        if (!voteEnabled) {
+            throw new IllegalStateException("종료된 투표입니다.");
+        }
         post.updatePost(dto.getTitle(),
                         dto.getContent(),
                         dto.getVideoId(),
                         dto.isDeleted(),
                         dto.isSecret(),
-                        category);
+                        category,
+                        dto.getVoteEndTime());
 
         if (dto.hasVoteOptions()) {
             voteOptionService.createVoteOptions(post, dto.getVoteOptions());
@@ -114,5 +127,12 @@ public class PostService {
 
     private Post getOrThrow(Long postId) {
         return EntityFinder.findOrThrow(postRepository, postId, "존재하지 않는 게시글입니다.");
+    }
+
+    @Scheduled(fixedDelay = 60 * 1000) // 1분마다 실행
+    public void disableExpiredVotes() {
+        log.info("스케줄링합니다.");
+        LocalDateTime now = LocalDateTime.now();
+        postRepository.disableVotesPastDeadline(now);
     }
 }

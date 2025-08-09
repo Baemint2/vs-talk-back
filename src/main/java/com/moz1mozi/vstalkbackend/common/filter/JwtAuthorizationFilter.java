@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -123,6 +125,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 requestURI.equals("/api/auth/logout/v1") ||
                 requestURI.equals("/api/v1/login") ||
                 requestURI.equals("/logout") ||
+                requestURI.contains("/loginCheck") ||
                 requestURI.contains("/css/style") ||
                 requestURI.startsWith("/static/") ||
                 requestURI.contains("/img/") ||
@@ -131,13 +134,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 requestURI.startsWith("/login/oauth2/code");
     }
 
-    private boolean isTokenExcluded(String requestURI, String method) {
-        // ✅ 로그인 없이 허용할 GET 요청
-        if (requestURI.startsWith("/api/post") && "GET".equalsIgnoreCase(method)) {
-            return true;
-        }
+    private static final Map<String, List<String>> EXCLUDED_PATHS = Map.of(
+            "GET", List.of("/api/posts", "/api/comments", "/api/votes/count", "/api/categories")
+    );
 
-        // ✅ 기타 로그인 없이 허용할 엔드포인트
-        return requestURI.startsWith("/api/category");
+    private boolean isTokenExcluded(String requestURI, String method) {
+        return EXCLUDED_PATHS.getOrDefault(method.toUpperCase(), List.of())
+                .stream()
+                .anyMatch(requestURI::startsWith);
     }
 }
