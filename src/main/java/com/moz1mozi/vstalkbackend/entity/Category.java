@@ -42,13 +42,15 @@ public class Category extends BaseTimeEntity {
                 .id(id)
                 .name(name)
                 .slug(slug)
+                .parentId(parent != null ? parent.getId() : null)
                 .build();
     }
 
     @Builder
-    public Category(String name, String slug) {
+    public Category(String name, String slug, Category parent) {
         this.name = name;
         this.slug = slug;
+        this.parent = parent;
     }
 
     public boolean isMainCategory() {

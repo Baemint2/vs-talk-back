@@ -2,20 +2,17 @@ package com.moz1mozi.vstalkbackend.service;
 
 import com.moz1mozi.vstalkbackend.common.EntityFinder;
 import com.moz1mozi.vstalkbackend.dto.post.PostSort;
-import com.moz1mozi.vstalkbackend.dto.post.request.PostUpdateDto;
-import com.moz1mozi.vstalkbackend.dto.vote.response.VoteOptionDto;
 import com.moz1mozi.vstalkbackend.dto.post.request.PostCreateDto;
+import com.moz1mozi.vstalkbackend.dto.post.request.PostUpdateDto;
 import com.moz1mozi.vstalkbackend.dto.post.response.PostDto;
+import com.moz1mozi.vstalkbackend.dto.vote.response.VoteOptionDto;
 import com.moz1mozi.vstalkbackend.entity.Category;
 import com.moz1mozi.vstalkbackend.entity.Post;
 import com.moz1mozi.vstalkbackend.entity.User;
 import com.moz1mozi.vstalkbackend.entity.VoteOption;
 import com.moz1mozi.vstalkbackend.repository.PostRepository;
-import io.micrometer.common.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -86,7 +83,7 @@ public class PostService {
 
     // 특정 카테고리에 속해있는 게시물 리스트만 가져오기
     public List<PostDto> getPostListByCategory(String slug) {
-        List<Post> categoryPosts = postRepository.findByCategorySlugAndIsDeletedFalse(slug, Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<Post> categoryPosts = postRepository.findPostRowsByCategorySlugTree(slug);
         return categoryPosts.stream().map(Post::toDto).toList();
     }
 

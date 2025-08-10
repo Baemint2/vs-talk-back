@@ -72,12 +72,11 @@ public class User extends BaseTimeEntity {
 
     public UserDto toDto() {
         return UserDto.builder()
-                .username(username)
+                .username(username != null ? username : providerKey)
                 .password(password)
                 .email(email)
                 .nickname(nickname)
                 .profile(profile)
-                .providerKey(providerKey)
                 .role(role)
                 .build();
     }

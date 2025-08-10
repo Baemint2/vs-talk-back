@@ -3,13 +3,13 @@ package com.moz1mozi.vstalkbackend.controller;
 import com.moz1mozi.vstalkbackend.ApiResponse;
 import com.moz1mozi.vstalkbackend.dto.category.request.CategoryCreateDto;
 import com.moz1mozi.vstalkbackend.dto.category.response.CategoryDto;
+import com.moz1mozi.vstalkbackend.dto.category.response.CategoryTreeDto;
 import com.moz1mozi.vstalkbackend.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +27,12 @@ public class CategoryController {
     @GetMapping
     public ApiResponse<List<CategoryDto>> findAllCategoryName(){
         return ApiResponse.ok(categoryService.findAllCategoryName());
+    }
+
+    @Operation(summary = "카테고리 tree 조회")
+    @GetMapping("/tree")
+    public ApiResponse<List<CategoryTreeDto>> findAllCategoryTree(){
+        return ApiResponse.ok(categoryService.getCategoryTree());
     }
 
     @Operation(summary = "카테고리 생성")

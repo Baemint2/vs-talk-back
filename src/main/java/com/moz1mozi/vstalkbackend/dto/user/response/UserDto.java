@@ -32,9 +32,15 @@ public class UserDto {
     @Override
     public String toString() {
         return "UserDto{" +
-                "email='" + email + '\'' +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", profile='" + profile + '\'' +
                 ", nickname='" + nickname + '\'' +
+                ", password='" + password + '\'' +
+                ", providerKey='" + providerKey + '\'' +
+                ", accessToken='" + accessToken + '\'' +
+                ", role=" + role +
                 '}';
     }
 }

@@ -39,11 +39,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         try {
             String token = resolveToken(request);
 
-        if (isExcludedPath(request.getRequestURI(), request.getMethod())) {
-            chain.doFilter(request, response);
-            return;
-        }
-
         if (token != null) {
             try {
                 if (jwtUtil.validateToken(token)) {
@@ -98,8 +93,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals("accessToken")) {
                         return cookie.getValue();
-                    } else if (cookie.getName().equals("refreshToken")) {
-                        return cookie.getValue();
                     }
                 }
             }
@@ -120,20 +113,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return authentication;
     }
 
-    private boolean isExcludedPath(String requestURI, String method) {
-        return requestURI.equals("/login") ||
-                requestURI.equals("/api/auth/logout/v1") ||
-                requestURI.equals("/api/v1/login") ||
-                requestURI.equals("/logout") ||
-                requestURI.contains("/loginCheck") ||
-                requestURI.contains("/css/style") ||
-                requestURI.startsWith("/static/") ||
-                requestURI.contains("/img/") ||
-                requestURI.contains("manifest") ||
-                requestURI.startsWith("/oauth2/authorization") ||  // OAuth2 로그인 요청 경로
-                requestURI.startsWith("/login/oauth2/code");
-    }
-
     private static final Map<String, List<String>> EXCLUDED_PATHS = Map.of(
             "GET", List.of("/api/posts", "/api/comments", "/api/votes/count", "/api/categories")
     );
@@ -142,5 +121,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return EXCLUDED_PATHS.getOrDefault(method.toUpperCase(), List.of())
                 .stream()
                 .anyMatch(requestURI::startsWith);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String requestURI = request.getRequestURI();
+        return requestURI.equals("/api/auth/logout/v1") ||
+                requestURI.equals("/logout") ||
+                requestURI.contains("/css/style") ||
+                requestURI.startsWith("/static/") ||
+                requestURI.contains("/img/") ||
+                requestURI.contains("manifest") ||
+                requestURI.startsWith("/oauth2/authorization") ||  // OAuth2 로그인 요청 경로
+                requestURI.startsWith("/login/oauth2/code") ||
+                requestURI.equals("/api/v1/login");
     }
 }

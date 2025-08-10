@@ -30,25 +30,26 @@ public class UserService {
     }
 
 
-    public User saveUserIfNotExist(String providerId, String email, String nickname, String profile, ProviderType providerType) {
-        log.info("[saveUserIfNotExist] providerId: {}", providerId);
-        User existUser = userRepository.findByProviderKey(providerId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-        System.out.println("[saveUserIfNotExist] = " + existUser);
-        if(existUser == null) {
-            User user = User.builder()
-                    .email(email)
-                    .nickname(nickname)
-                    .profile(profile)
-                    .providerKey(providerId)
-                    .providerType(providerType)
-                    .role(Role.USER)
-                    .build();
-            userRepository.save(user);
-        }
-
-        existUser.changeLastLoginDate();
-        return existUser;
+    public User saveUserIfNotExist(String providerId, String email, String nickname,
+                                   String profile, ProviderType providerType) {
+        // 1) 존재하면 마지막 로그인 시간만 갱신
+        return userRepository.findByProviderKey(providerId)
+                .map(user -> {
+                    user.changeLastLoginDate();
+                    return user;
+                })
+                .orElseGet(() -> {
+                    User user = User.builder()
+                            .email(email)
+                            .nickname(nickname)
+                            .profile(profile)
+                            .providerKey(providerId)
+                            .providerType(providerType)
+                            .role(Role.USER)
+                            .build();
+                    user.changeLastLoginDate();
+                    return userRepository.save(user);
+                });
     }
 
     public User createUser(UserCreateDto dto) {

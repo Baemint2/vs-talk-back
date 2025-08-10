@@ -13,7 +13,30 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByIsDeletedFalse(Sort sort);
-    List<Post> findByCategorySlugAndIsDeletedFalse(String slug, Sort sort);
+
+    @Query(value = """
+    WITH RECURSIVE cat_tree AS (
+        SELECT c.category_id, c.parent_id, c.name, c.slug
+        FROM category c
+        WHERE c.slug = :slug
+        UNION ALL
+        SELECT c2.category_id, c2.parent_id, c2.name, c2.slug
+        FROM category c2
+        JOIN cat_tree ct ON c2.parent_id = ct.category_id
+    )
+    SELECT
+        p.*,
+        c.category_id,
+        c.name,
+        c.slug
+    FROM post p
+    JOIN category c  ON c.category_id = p.category_category_id
+    JOIN cat_tree ct ON ct.category_id = c.category_id
+    WHERE p.is_deleted = false
+    ORDER BY p.created_at desc 
+    """,
+            nativeQuery = true)
+    List<Post> findPostRowsByCategorySlugTree(String slug);
 
     // select * from where title like %검색어%
     List<Post> findByTitleContainingIgnoreCaseAndIsDeletedFalse(String title, Sort sort);
