@@ -1,6 +1,7 @@
 package com.moz1mozi.vstalkbackend.service;
 
 import com.moz1mozi.vstalkbackend.dto.vote.request.VoteCreateDto;
+import com.moz1mozi.vstalkbackend.dto.vote.response.PostVoteCountDto;
 import com.moz1mozi.vstalkbackend.dto.vote.response.VoteCountDto;
 import com.moz1mozi.vstalkbackend.entity.Post;
 import com.moz1mozi.vstalkbackend.entity.User;
@@ -67,6 +68,11 @@ public class VoteService {
     // 투표 카운트 조회 ( post ID 기준으로 잡기 )
     public List<VoteCountDto> getVoteCount(Long postId) {
         return voteRepository.countByPostVoteOption(postId);
+    }
+
+    // 투표 카운트 조회 ( post ID 기준으로 잡기 )
+    public List<PostVoteCountDto> getVotes() {
+        return voteRepository.countByPostVoteOption();
     }
 
     // 특정 유저 투표 여부 확인하기

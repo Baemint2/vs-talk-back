@@ -1,5 +1,6 @@
 package com.moz1mozi.vstalkbackend.repository;
 
+import com.moz1mozi.vstalkbackend.dto.vote.response.PostVoteCountDto;
 import com.moz1mozi.vstalkbackend.dto.vote.response.VoteCountDto;
 import com.moz1mozi.vstalkbackend.entity.Post;
 import com.moz1mozi.vstalkbackend.entity.User;
@@ -17,5 +18,9 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     @Query("SELECT new com.moz1mozi.vstalkbackend.dto.vote.response.VoteCountDto(v.voteOption.id, COUNT(v.id)) " +
             "FROM Vote v WHERE v.post.id = :postId GROUP BY v.voteOption.id ORDER BY v.voteOption.id")
     List<VoteCountDto> countByPostVoteOption(@Param("postId") Long postId);
+
+    @Query("SELECT new com.moz1mozi.vstalkbackend.dto.vote.response.PostVoteCountDto(v.post.id, COUNT(v.id)) " +
+            "FROM Vote v group by v.post.id ORDER BY v.post.id")
+    List<PostVoteCountDto> countByPostVoteOption();
 
 }

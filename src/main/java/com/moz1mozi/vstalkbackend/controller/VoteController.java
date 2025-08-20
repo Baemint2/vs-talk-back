@@ -31,6 +31,12 @@ public class VoteController {
         return ResponseEntity.ok(voteService.getVoteCount(postId));
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<?> getVoteCount() {
+        return ResponseEntity.ok(voteService.getVotes());
+    }
+
+
     @GetMapping("/{postId}/status")
     public ResponseEntity<?> isVoted(@PathVariable Long postId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
