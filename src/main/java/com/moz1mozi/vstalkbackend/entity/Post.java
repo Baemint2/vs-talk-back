@@ -104,6 +104,7 @@ public class Post extends BaseTimeEntity {
                 .commentCount(commentCount)
                 .videoId(videoId)
                 .author(author.getUsername())
+                .createdAt(getCreatedAt())
                 .updatedAt(getUpdatedAt())
                 .voteEnabled(voteEnabled)
                 .voteEndTime(voteEndTime)

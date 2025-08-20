@@ -13,6 +13,8 @@ import com.moz1mozi.vstalkbackend.entity.VoteOption;
 import com.moz1mozi.vstalkbackend.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -69,28 +71,46 @@ public class PostService {
         return dto;
     }
 
-    public List<PostDto> getPostList(String orderby) {
+    public Slice<PostDto> getPostList(String orderBy, int page, int size) {
         LocalDateTime now = LocalDateTime.now();
-        // range: "24h", "7d", "all" 등 기간 필터(옵션)
-        PostSort sort = PostSort.from(orderby);
+        PostSort sort = PostSort.from(orderBy);
         return switch (sort) {
-            case CREATED_ASC  -> postRepository.findByIsDeletedFalse(Sort.by("createdAt").ascending()).stream().map(Post::toDto).toList();
-            case CREATED_DESC -> postRepository.findByIsDeletedFalse((Sort.by("createdAt").descending())).stream().map(Post::toDto).toList();
-            case VOTES_DESC   -> postRepository.findTopVotedPosts().stream().map(Post::toDto).toList();
-            case ENDING_SOON  -> postRepository.findVoteActivePosts(now).stream().map(Post::toDto).toList();
+            case CREATED_ASC  -> postRepository
+                    .findByIsDeletedFalse(pageRequest(page, size, Sort.by("createdAt").ascending()
+                            .and(Sort.by("id").ascending())))
+                    .map(Post::toDto);
+            case CREATED_DESC -> postRepository.findByIsDeletedFalse(pageRequest(page, size, Sort.by("createdAt").descending()
+                            .and(Sort.by("id").descending())))
+                            .map(Post::toDto);
+            case ENDING_SOON -> postRepository
+                    .findVoteActivePosts(LocalDateTime.now(), PageRequest.of(page, size))
+                    .map(Post::toDto);
+
+            case VOTES_DESC -> postRepository
+                    .findTopVotedPosts(PageRequest.of(page, size))
+                    .map(Post::toDto);
         };
     }
 
     // 특정 카테고리에 속해있는 게시물 리스트만 가져오기
-    public List<PostDto> getPostListByCategory(String slug) {
-        List<Post> categoryPosts = postRepository.findPostRowsByCategorySlugTree(slug);
-        return categoryPosts.stream().map(Post::toDto).toList();
+    public Slice<PostDto> getPostListByCategory(String slug, int page, int size, String orderBy) {
+        PostSort sort = PostSort.from(orderBy);
+        return switch (sort) {
+            case CREATED_ASC  -> postRepository.findPostRowsByCategorySlugTree(slug, pageRequest(page, size, Sort.by("created_at").ascending())).map(Post::toDto);
+            case CREATED_DESC -> postRepository.findPostRowsByCategorySlugTree(slug, pageRequest(page, size, Sort.by("created_at").descending())).map(Post::toDto);
+            case ENDING_SOON -> postRepository.findPostsBySlugTreeOrderByDeadline(slug, PageRequest.of(page, size)).map(Post::toDto);
+            case VOTES_DESC -> postRepository.findPostsBySlugTreeOrderByVoteCount(slug, PageRequest.of(page, size)).map(Post::toDto);
+        };
     }
 
     // 검색 메서드
-    public List<PostDto> searchPost(String keyword) {
-        List<Post> searchPosts = postRepository.findByTitleContainingIgnoreCaseAndIsDeletedFalse(keyword, Sort.by(Sort.Direction.DESC, "createdAt"));
-        return searchPosts.stream().map(Post::toDto).toList();
+    public Slice<PostDto> searchPost(String keyword, int page, int size) {
+        return postRepository
+                .findByTitleContainingIgnoreCaseAndIsDeletedFalse(
+                        keyword,
+                        pageRequest(page, size, Sort.by("createdAt").descending()
+                                .and(Sort.by("id").descending())))
+                .map(Post::toDto);
     }
 
     // 게시글 삭제
@@ -109,6 +129,7 @@ public class PostService {
         if (!voteEnabled) {
             throw new IllegalStateException("종료된 투표입니다.");
         }
+
         post.updatePost(dto.getTitle(),
                         dto.getContent(),
                         dto.getVideoId(),
@@ -131,5 +152,9 @@ public class PostService {
         log.info("스케줄링합니다.");
         LocalDateTime now = LocalDateTime.now();
         postRepository.disableVotesPastDeadline(now);
+    }
+
+    private static PageRequest pageRequest(int page, int size, Sort sort) {
+        return PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 50), sort);
     }
 }

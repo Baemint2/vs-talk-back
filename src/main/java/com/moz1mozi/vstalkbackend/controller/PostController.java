@@ -1,6 +1,7 @@
 package com.moz1mozi.vstalkbackend.controller;
 
 import com.moz1mozi.vstalkbackend.ApiResponse;
+import com.moz1mozi.vstalkbackend.dto.SliceResponse;
 import com.moz1mozi.vstalkbackend.dto.post.request.PostCreateDto;
 import com.moz1mozi.vstalkbackend.dto.post.request.PostUpdateDto;
 import com.moz1mozi.vstalkbackend.dto.post.response.PostDto;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,14 +40,24 @@ public class PostController {
 
     @Operation(summary = "게시글 조회", description = "정렬 조건에 맞게 조회된다.")
     @GetMapping
-    public ApiResponse<List<PostDto>> getPostList(@RequestParam(required = false) String orderBy) {
-        return ApiResponse.ok(postService.getPostList(orderBy));
+    public SliceResponse<PostDto> list(
+            @RequestParam(defaultValue = "desc") String orderBy,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        Slice<PostDto> slice = postService.getPostList(orderBy, page, size);
+        return new SliceResponse<>(slice.getContent(), slice.hasNext(), slice.getNumber(), slice.getSize());
     }
+
 
     @Operation(summary = "게시글 조회(카테고리)", description = "카테고리에 맞는 게시글 리스트를 조회한다.")
     @GetMapping("/category/{slug}")
-    public ApiResponse<List<PostDto>> getPostListByCategory(@PathVariable String slug) {
-        return ApiResponse.ok(postService.getPostListByCategory(slug));
+    public SliceResponse<PostDto> getPostListByCategory(@PathVariable String slug,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "20") int size,
+                                                        @RequestParam(required = false) String orderBy) {
+        Slice<PostDto> slice = postService.getPostListByCategory(slug, page, size, orderBy);
+        return new SliceResponse<>(slice.getContent(), slice.hasNext(), slice.getNumber(), slice.getSize());
     }
 
     @Operation(summary = "게시글 상세 조회")
@@ -56,9 +68,12 @@ public class PostController {
 
     @Operation(summary = "게시글 검색")
     @GetMapping("/search")
-    public ApiResponse<List<PostDto>> getSearchPostList(@RequestParam(required = false) String orderBy,
-                                           @RequestParam String title) {
-        return ApiResponse.ok(postService.searchPost(title));
+    public SliceResponse<PostDto> getSearchPostList(@RequestParam(required = false) String orderBy,
+                                                        @RequestParam String title,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "20") int size) {
+        Slice<PostDto> slice = postService.searchPost(title, page, size);
+        return new SliceResponse<>(slice.getContent(), slice.hasNext(), slice.getNumber(), slice.getSize());
     }
 
     // 게시글 삭제

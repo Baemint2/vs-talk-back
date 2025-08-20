@@ -1,5 +1,8 @@
 package com.moz1mozi.vstalkbackend.dto.post;
 
+import lombok.Getter;
+
+@Getter
 public enum PostSort {
     CREATED_ASC("asc"),
     CREATED_DESC("desc"),

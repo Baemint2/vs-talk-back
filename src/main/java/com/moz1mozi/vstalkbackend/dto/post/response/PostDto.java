@@ -27,6 +27,7 @@ public class PostDto {
     private boolean voteEnabled;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime voteEndTime;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Override

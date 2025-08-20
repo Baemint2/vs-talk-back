@@ -1,6 +1,8 @@
 package com.moz1mozi.vstalkbackend.repository;
 
 import com.moz1mozi.vstalkbackend.entity.Post;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,7 +14,7 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<Post> findByIsDeletedFalse(Sort sort);
+    Slice<Post> findByIsDeletedFalse(Pageable pageable);
 
     @Query(value = """
     WITH RECURSIVE cat_tree AS (
@@ -33,13 +35,45 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     JOIN category c  ON c.category_id = p.category_category_id
     JOIN cat_tree ct ON ct.category_id = c.category_id
     WHERE p.is_deleted = false
-    ORDER BY p.created_at desc 
     """,
             nativeQuery = true)
-    List<Post> findPostRowsByCategorySlugTree(String slug);
+    Slice<Post> findPostRowsByCategorySlugTree(String slug, Pageable pageable);
+
+    @Query(value = """
+WITH RECURSIVE cat_tree AS (
+  SELECT c.category_id FROM category c WHERE c.slug = :slug
+  UNION ALL
+  SELECT c2.category_id FROM category c2 JOIN cat_tree ct ON c2.parent_id = ct.category_id
+)
+SELECT p.*
+FROM post p
+JOIN category c ON c.category_id = p.category_category_id
+JOIN cat_tree ct ON ct.category_id = c.category_id
+WHERE p.is_deleted = false
+ORDER BY p.vote_end_time ASC
+""", nativeQuery = true)
+    Slice<Post> findPostsBySlugTreeOrderByDeadline(@Param("slug") String slug, Pageable pageable);
+
+    @Query(value = """
+WITH RECURSIVE cat_tree AS (
+  SELECT c.category_id FROM category c WHERE c.slug = :slug
+  UNION ALL
+  SELECT c2.category_id FROM category c2 JOIN cat_tree ct ON c2.parent_id = ct.category_id
+)
+SELECT p.* 
+FROM post p
+JOIN category c ON c.category_id = p.category_category_id
+JOIN cat_tree ct ON ct.category_id = c.category_id
+LEFT JOIN vote v ON v.post_id = p.post_id
+WHERE p.is_deleted = false
+GROUP BY p.post_id
+ORDER BY COUNT(v.post_id) DESC, p.created_at DESC
+""", nativeQuery = true)
+    Slice<Post> findPostsBySlugTreeOrderByVoteCount(@Param("slug") String slug, Pageable pageable);
+
 
     // select * from where title like %검색어%
-    List<Post> findByTitleContainingIgnoreCaseAndIsDeletedFalse(String title, Sort sort);
+    Slice<Post> findByTitleContainingIgnoreCaseAndIsDeletedFalse(String keyword, Pageable pageable);
 
     @Modifying
     @Query("UPDATE Post p " +
@@ -53,7 +87,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE p.isDeleted = false " +
             "group by p " +
             "order by count(v) desc, p.createdAt desc")
-    List<Post> findTopVotedPosts();
+    Slice<Post> findTopVotedPosts(Pageable pageable);
 
     @Query("""
     SELECT p
@@ -63,6 +97,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
       AND p.isDeleted = false
     ORDER BY p.voteEndTime ASC
     """)
-    List<Post> findVoteActivePosts(@Param("now") LocalDateTime now);
+    Slice<Post> findVoteActivePosts(@Param("now") LocalDateTime now, Pageable pageable);
 
 }
