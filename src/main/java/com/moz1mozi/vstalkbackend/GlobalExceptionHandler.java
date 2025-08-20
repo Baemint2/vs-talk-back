@@ -14,5 +14,12 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body("참조 중인 데이터가 있어 삭제할 수 없습니다.");
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalStateException(IllegalStateException e) {
+        return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
+    }
 }
 

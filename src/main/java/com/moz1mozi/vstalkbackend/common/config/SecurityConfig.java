@@ -42,7 +42,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, JwtUtil jwtUtil, UserSecurityService userSecurityService) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, JwtUtil jwtUtil, UserSecurityService userSecurityService, LoginSuccessHandler loginSuccessHandler) throws Exception {
         http
                 .cors(withDefaults())         // CORS 필터 활성화
                 .csrf(AbstractHttpConfigurer::disable)
@@ -54,10 +54,10 @@ public class SecurityConfig {
             .oauth2Login(oauth2 -> oauth2
                             .loginPage("/login")
                     .userInfoEndpoint(userInfo ->
-                    userInfo.userService(oAuth2UserService))
+                            userInfo.userService(oAuth2UserService))
                     .tokenEndpoint(token ->
                             token.accessTokenResponseClient(accessTokenResponseClient()))
-                    .successHandler(new LoginSuccessHandler(jwtUtil))
+                    .successHandler(loginSuccessHandler)
             )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionHandling -> exceptionHandling
