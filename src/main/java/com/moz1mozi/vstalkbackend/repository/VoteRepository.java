@@ -23,4 +23,11 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
             "FROM Vote v group by v.post.id ORDER BY v.post.id")
     List<PostVoteCountDto> countByPostVoteOption();
 
+    @Query("""
+        SELECT v.post.id, COUNT(v)
+        FROM Vote v
+        WHERE v.post.id IN :postIds
+        GROUP BY v.post.id
+        """)
+    List<Long[]> countVotesByPostIds(@Param("postIds") List<Long> postIds);
 }

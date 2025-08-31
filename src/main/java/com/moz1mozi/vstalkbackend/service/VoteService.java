@@ -1,5 +1,6 @@
 package com.moz1mozi.vstalkbackend.service;
 
+import com.moz1mozi.vstalkbackend.common.EntityFinder;
 import com.moz1mozi.vstalkbackend.dto.vote.request.VoteCreateDto;
 import com.moz1mozi.vstalkbackend.dto.vote.response.PostVoteCountDto;
 import com.moz1mozi.vstalkbackend.dto.vote.response.VoteCountDto;
@@ -7,6 +8,7 @@ import com.moz1mozi.vstalkbackend.entity.Post;
 import com.moz1mozi.vstalkbackend.entity.User;
 import com.moz1mozi.vstalkbackend.entity.Vote;
 import com.moz1mozi.vstalkbackend.entity.VoteOption;
+import com.moz1mozi.vstalkbackend.repository.PostRepository;
 import com.moz1mozi.vstalkbackend.repository.VoteOptionRepository;
 import com.moz1mozi.vstalkbackend.repository.VoteRepository;
 import jakarta.transaction.Transactional;
@@ -15,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,7 +28,7 @@ import java.util.Optional;
 public class VoteService {
 
     private final VoteRepository voteRepository;
-    private final PostService postService;
+    private final PostRepository postRepository;
     private final UserService userService;
     private final VoteOptionRepository voteOptionRepository;
 
@@ -33,7 +37,7 @@ public class VoteService {
     public void vote(VoteCreateDto dto, String username) {
         User user = userService.findByUsername(username);
 
-        Post post = postService.getPostId(dto.getPostId());
+        Post post = getOrThrow(dto.getPostId());
 
         VoteOption voteOption = voteOptionRepository.findById(dto.getOptionId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 투표 옵션입니다."));
@@ -78,9 +82,22 @@ public class VoteService {
     // 특정 유저 투표 여부 확인하기
     public boolean isVoted(Long postId, String username) {
         User user = userService.findByUsername(username);
-        Post post = postService.getPostId(postId);
+        Post post = getOrThrow(postId);
         Optional<Vote> existingVote = voteRepository.findByAuthorAndPost(user, post);
         return existingVote.isPresent();
     }
 
+    public Map<Long, Long> getVoteCountsForPosts(List<Long> postIds) {
+        // VoteRepository에 메서드 하나만 추가
+        return voteRepository.countVotesByPostIds(postIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        result -> result[0],  // postId
+                        result -> result[1]   // count
+                ));
+    }
+
+    private Post getOrThrow(Long postId) {
+        return EntityFinder.findOrThrow(postRepository, postId, "존재하지 않는 게시글입니다.");
+    }
 }
