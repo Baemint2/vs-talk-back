@@ -54,7 +54,10 @@ public class Post extends BaseTimeEntity {
     private List<Vote> votes;
 
     @Builder
-    public Post(Long id, String title, String content, String videoId, boolean isDeleted, boolean isSecret, long viewCount, long commentCount, boolean voteEnabled, LocalDateTime voteEndTime, User author, Category category, List<Comment> comments, List<Vote> votes) {
+    public Post(Long id, String title, String content, String videoId, boolean isDeleted,
+                boolean isSecret, long viewCount, long commentCount, boolean voteEnabled,
+                LocalDateTime voteEndTime, User author, Category category, List<Comment> comments,
+                List<Vote> votes) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -110,5 +113,10 @@ public class Post extends BaseTimeEntity {
                 .voteEndTime(voteEndTime)
                 .isDeleted(isDeleted)
                 .build();
+    }
+
+    public void updateVoteEndTime() {
+        this.voteEndTime = LocalDateTime.now().plusWeeks(1);
+        this.voteEnabled = true;
     }
 }

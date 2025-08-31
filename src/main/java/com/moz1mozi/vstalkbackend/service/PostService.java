@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -33,6 +34,7 @@ public class PostService {
     private final UserService userService;
     private final CategoryService categoryService;
     private final VoteOptionService voteOptionService;
+    private final VoteService voteService;
 
     public Long createPost(PostCreateDto dto, String username) {
 
@@ -74,13 +76,14 @@ public class PostService {
     public Slice<PostDto> getPostList(String orderBy, int page, int size) {
         LocalDateTime now = LocalDateTime.now();
         PostSort sort = PostSort.from(orderBy);
-        return switch (sort) {
-            case CREATED_ASC  -> postRepository
+        Slice<PostDto> posts = switch (sort) {
+            case CREATED_ASC -> postRepository
                     .findByIsDeletedFalse(pageRequest(page, size, Sort.by("createdAt").ascending()
                             .and(Sort.by("id").ascending())))
                     .map(Post::toDto);
-            case CREATED_DESC -> postRepository.findByIsDeletedFalse(pageRequest(page, size, Sort.by("createdAt").descending()
-                            .and(Sort.by("id").descending())))
+            case CREATED_DESC ->
+                    postRepository.findByIsDeletedFalse(pageRequest(page, size, Sort.by("createdAt").descending()
+                                    .and(Sort.by("id").descending())))
                             .map(Post::toDto);
             case ENDING_SOON -> postRepository
                     .findVoteActivePosts(LocalDateTime.now(), PageRequest.of(page, size))
@@ -90,17 +93,25 @@ public class PostService {
                     .findTopVotedPosts(PageRequest.of(page, size))
                     .map(Post::toDto);
         };
+        setVoteCountsForPosts(posts.getContent());
+        return posts;
     }
 
     // 특정 카테고리에 속해있는 게시물 리스트만 가져오기
     public Slice<PostDto> getPostListByCategory(String slug, int page, int size, String orderBy) {
         PostSort sort = PostSort.from(orderBy);
-        return switch (sort) {
-            case CREATED_ASC  -> postRepository.findPostRowsByCategorySlugTree(slug, pageRequest(page, size, Sort.by("created_at").ascending())).map(Post::toDto);
-            case CREATED_DESC -> postRepository.findPostRowsByCategorySlugTree(slug, pageRequest(page, size, Sort.by("created_at").descending())).map(Post::toDto);
-            case ENDING_SOON -> postRepository.findPostsBySlugTreeOrderByDeadline(slug, PageRequest.of(page, size)).map(Post::toDto);
-            case VOTES_DESC -> postRepository.findPostsBySlugTreeOrderByVoteCount(slug, PageRequest.of(page, size)).map(Post::toDto);
+        Slice<PostDto> posts = switch (sort) {
+            case CREATED_ASC ->
+                    postRepository.findPostRowsByCategorySlugTree(slug, pageRequest(page, size, Sort.by("created_at").ascending())).map(Post::toDto);
+            case CREATED_DESC ->
+                    postRepository.findPostRowsByCategorySlugTree(slug, pageRequest(page, size, Sort.by("created_at").descending())).map(Post::toDto);
+            case ENDING_SOON ->
+                    postRepository.findPostsBySlugTreeOrderByDeadline(slug, PageRequest.of(page, size)).map(Post::toDto);
+            case VOTES_DESC ->
+                    postRepository.findPostsBySlugTreeOrderByVoteCount(slug, PageRequest.of(page, size)).map(Post::toDto);
         };
+        setVoteCountsForPosts(posts.getContent());
+        return posts;
     }
 
     // 검색 메서드
@@ -157,4 +168,28 @@ public class PostService {
     private static PageRequest pageRequest(int page, int size, Sort sort) {
         return PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 50), sort);
     }
+
+    public void updatePostVoteEndTime(Long postId) {
+        Post post = getOrThrow(postId);
+        post.updateVoteEndTime();
+    }
+
+
+    // 투표 수를 일괄로 설정하는 헬퍼 메서드
+    private void setVoteCountsForPosts(List<PostDto> posts) {
+        if (posts.isEmpty()) return;
+
+        List<Long> postIds = posts.stream()
+                .map(PostDto::getId)
+                .toList();
+
+        // 한 번의 쿼리로 모든 포스트의 투표 수 조회
+        Map<Long, Long> voteCountMap = voteService.getVoteCountsForPosts(postIds);
+
+        // 각 PostDto에 투표 수 설정
+        posts.forEach(post ->
+                post.setVoteCount(voteCountMap.getOrDefault(post.getId(), 0L))
+        );
+    }
+
 }

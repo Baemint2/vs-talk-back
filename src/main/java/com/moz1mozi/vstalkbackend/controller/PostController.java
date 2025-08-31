@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,6 +89,14 @@ public class PostController {
     public ApiResponse<?> updatePost(@PathVariable Long postId,
                                         @RequestBody PostUpdateDto dto) {
         postService.updatePost(postId, dto);
+        return ApiResponse.of(HttpStatus.OK, null);
+    }
+
+    // 투표 연장
+    @Operation(summary = "투표 연장")
+    @PutMapping("/{postId}/extend-vote")
+    public ApiResponse<?> extendVote(@PathVariable Long postId) {
+        postService.updatePostVoteEndTime(postId);
         return ApiResponse.of(HttpStatus.OK, null);
     }
 }

@@ -29,6 +29,7 @@ public class PostDto {
     private LocalDateTime voteEndTime;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long voteCount;
 
     @Override
     public String toString() {
