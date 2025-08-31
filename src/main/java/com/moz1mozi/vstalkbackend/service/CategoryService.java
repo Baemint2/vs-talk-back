@@ -59,6 +59,11 @@ public class CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
     }
 
+    public Category getCategoryByName(String name) {
+        return categoryRepository.findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+    }
+
     public Category createCategory(CategoryCreateDto dto) {
 
         Category parent = null;

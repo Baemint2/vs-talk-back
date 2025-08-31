@@ -33,6 +33,10 @@ public class Category extends BaseTimeEntity {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
+    // Quiz와의 관계 추가
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Quiz> quizzes = new ArrayList<>();
+
     // 양방향 관계 추가 - 하위 카테고리들
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Category> children = new ArrayList<>();
@@ -70,5 +74,12 @@ public class Category extends BaseTimeEntity {
         children.remove(child);
         child.parent = null;
     }
+
+    public List<Quiz> getActiveQuizzes() {
+        return this.quizzes.stream()
+                .filter(Quiz::isActive)
+                .toList();
+    }
+
 
 }
