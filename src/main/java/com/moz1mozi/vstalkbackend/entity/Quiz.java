@@ -1,5 +1,7 @@
 package com.moz1mozi.vstalkbackend.entity;
 
+import com.moz1mozi.vstalkbackend.dto.quiz.QuizDto;
+import com.moz1mozi.vstalkbackend.dto.quiz.QuizOptionDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -58,5 +60,21 @@ public class Quiz extends BaseTimeEntity {
         this.isActive = isActive;
     }
 
+
+    public QuizDto toDto() {
+        return QuizDto.builder()
+                .id(this.getId())
+                .title(this.getTitle())
+                .categoryId(this.getCategory().getId())
+                .options(this.getOptions().stream()
+                        .map(option -> QuizOptionDto.builder()
+                                .id(option.getId())
+                                .optionText(option.getOptionText())
+                                .isCorrect(option.isCorrect())
+                                .displayOrder(option.getDisplayOrder())
+                                .build())
+                        .toList())
+                .build();
+    }
 
 }

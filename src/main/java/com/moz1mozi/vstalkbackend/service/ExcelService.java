@@ -39,8 +39,12 @@ public class ExcelService {
                 if (row.getRowNum() == 0) continue; // 헤더 스킵
 
                 switch (type) {
-                    case "vote" : createVote(username, row);
-                    case "quiz" : createQuiz(row);
+                    case "vote" :
+                        createVote(username, row);
+                        break;
+                    case "quiz" :
+                        createQuiz(row);
+                        break;
                     default:
                         throw new IllegalArgumentException("지원하지 않는 type입니다. : " + type);
                 }
@@ -57,7 +61,7 @@ public class ExcelService {
         String title = row.getCell(1).getStringCellValue();
         List<QuizOptionCreateDto> quizOptions = new ArrayList<>();
         String answer = row.getCell(6).getStringCellValue();
-        for (int i = 1; i < row.getLastCellNum(); i++) {
+        for (int i = 2; i < row.getLastCellNum(); i++) {
             String option = row.getCell(i).getStringCellValue();
             QuizOptionCreateDto quizOption = QuizOptionCreateDto.builder()
                     .optionText(option)

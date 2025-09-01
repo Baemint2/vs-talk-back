@@ -41,6 +41,19 @@ public class QuizHistory extends BaseTimeEntity{
         this.completedAt = completedAt;
     }
 
+    public static QuizHistory createFromAnswer(User user, Quiz quiz, QuizOption selectedOption) {
+
+        boolean isCorrect = selectedOption.isCorrect();
+
+        return QuizHistory.builder()
+                .user(user)
+                .quiz(quiz)
+                .selectedOption(selectedOption)
+                .isCorrect(isCorrect)
+                .completedAt(LocalDateTime.now())
+                .build();
+    }
+
     // Quiz를 통해 Category에 접근
     public Category getCategory() {
         return this.quiz != null ? this.quiz.getCategory() : null;

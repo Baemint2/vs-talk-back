@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
@@ -13,7 +14,12 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     @Query("SELECT q FROM Quiz q " +
             "JOIN FETCH q.options " +
             "WHERE q.category.id = :categoryId " +
-            "AND q.isActive = true")
-    List<Quiz> findAllActiveByCategoryIdWithOptions(@Param("categoryId") Long categoryId);
-
+            "AND q.isActive = true " +
+            "AND NOT EXISTS (" +
+            "SELECT 1 FROM QuizHistory qh " +
+            "WHERE qh.quiz.id = q.id " +
+            "AND qh.user.id = :userId" +
+            ")")
+    List<Quiz> findUnattemptedActiveByCategoryIdWithOptions(@Param("categoryId") Long categoryId,
+                                                            @Param("userId") Long userId);
 }
