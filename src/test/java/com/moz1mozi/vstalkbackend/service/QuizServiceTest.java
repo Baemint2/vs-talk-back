@@ -1,6 +1,7 @@
 package com.moz1mozi.vstalkbackend.service;
 
-import com.moz1mozi.vstalkbackend.dto.quiz.QuizDto;
+import com.moz1mozi.vstalkbackend.domain.quiz.dto.response.QuizDto;
+import com.moz1mozi.vstalkbackend.domain.quiz.service.QuizService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

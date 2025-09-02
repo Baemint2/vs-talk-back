@@ -1,7 +1,8 @@
 package com.moz1mozi.vstalkbackend.service;
 
-import com.moz1mozi.vstalkbackend.dto.user.request.UserCreateDto;
-import com.moz1mozi.vstalkbackend.entity.User;
+import com.moz1mozi.vstalkbackend.domain.user.service.UserService;
+import com.moz1mozi.vstalkbackend.domain.user.dto.request.UserCreateDto;
+import com.moz1mozi.vstalkbackend.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

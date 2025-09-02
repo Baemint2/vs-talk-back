@@ -1,7 +1,7 @@
 package com.moz1mozi.vstalkbackend.common.auth;
 
 
-import com.moz1mozi.vstalkbackend.dto.user.response.UserDto;
+import com.moz1mozi.vstalkbackend.domain.user.dto.response.UserDto;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,0 +1,46 @@
+package com.moz1mozi.vstalkbackend.domain.user.dto.response;
+
+import com.moz1mozi.vstalkbackend.domain.user.entity.Role;
+import com.moz1mozi.vstalkbackend.domain.user.entity.User;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
+public class UserDto {
+
+    private long id;
+    private String username;
+    private String email;
+    private String profile;
+    private String nickname;
+    private String password;
+    private String providerKey;
+    private String accessToken;
+    private Role role;
+
+    public User toEntity() {
+        return User.builder()
+                .username(username)
+                .email(email)
+                .nickname(nickname)
+                .profile(profile)
+                .providerKey(providerKey)
+                .build();
+    }
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", profile='" + profile + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", password='" + password + '\'' +
+                ", providerKey='" + providerKey + '\'' +
+                ", accessToken='" + accessToken + '\'' +
+                ", role=" + role +
+                '}';
+    }
+}

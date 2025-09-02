@@ -1,8 +1,9 @@
 package com.moz1mozi.vstalkbackend.service;
 
-import com.moz1mozi.vstalkbackend.dto.category.request.CategoryCreateDto;
-import com.moz1mozi.vstalkbackend.dto.category.response.CategoryDto;
-import com.moz1mozi.vstalkbackend.entity.Category;
+import com.moz1mozi.vstalkbackend.domain.post.dto.request.CategoryCreateDto;
+import com.moz1mozi.vstalkbackend.domain.post.dto.response.CategoryDto;
+import com.moz1mozi.vstalkbackend.domain.post.entity.Category;
+import com.moz1mozi.vstalkbackend.domain.post.service.CategoryService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

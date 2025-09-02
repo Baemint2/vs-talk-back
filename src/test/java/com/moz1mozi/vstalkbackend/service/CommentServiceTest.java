@@ -1,13 +1,17 @@
 package com.moz1mozi.vstalkbackend.service;
 
-import com.moz1mozi.vstalkbackend.dto.comment.request.CommentCreateDto;
-import com.moz1mozi.vstalkbackend.dto.comment.response.CommentDto;
-import com.moz1mozi.vstalkbackend.dto.post.request.PostCreateDto;
-import com.moz1mozi.vstalkbackend.dto.user.request.UserCreateDto;
-import com.moz1mozi.vstalkbackend.dto.vote.request.VoteOptionCreateDto;
-import com.moz1mozi.vstalkbackend.entity.Category;
-import com.moz1mozi.vstalkbackend.entity.User;
-import com.moz1mozi.vstalkbackend.repository.CategoryRepository;
+import com.moz1mozi.vstalkbackend.domain.user.service.UserService;
+import com.moz1mozi.vstalkbackend.domain.post.dto.request.CommentCreateDto;
+import com.moz1mozi.vstalkbackend.domain.post.dto.response.CommentDto;
+import com.moz1mozi.vstalkbackend.domain.post.dto.request.PostCreateDto;
+import com.moz1mozi.vstalkbackend.domain.user.dto.request.UserCreateDto;
+import com.moz1mozi.vstalkbackend.domain.post.dto.request.VoteOptionCreateDto;
+import com.moz1mozi.vstalkbackend.domain.post.entity.Category;
+import com.moz1mozi.vstalkbackend.domain.user.entity.User;
+import com.moz1mozi.vstalkbackend.domain.post.repository.CategoryRepository;
+import com.moz1mozi.vstalkbackend.domain.post.service.CommentService;
+import com.moz1mozi.vstalkbackend.domain.post.service.PostService;
+import com.moz1mozi.vstalkbackend.domain.post.service.VoteOptionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,28 +1,28 @@
 package com.moz1mozi.vstalkbackend.service;
 
-import com.moz1mozi.vstalkbackend.dto.post.request.PostCreateDto;
-import com.moz1mozi.vstalkbackend.dto.post.request.PostUpdateDto;
-import com.moz1mozi.vstalkbackend.dto.post.response.PostDto;
-import com.moz1mozi.vstalkbackend.dto.user.request.UserCreateDto;
-import com.moz1mozi.vstalkbackend.dto.vote.request.VoteOptionCreateDto;
-import com.moz1mozi.vstalkbackend.entity.Category;
-import com.moz1mozi.vstalkbackend.entity.Post;
-import com.moz1mozi.vstalkbackend.entity.User;
-import com.moz1mozi.vstalkbackend.repository.CategoryRepository;
-import com.moz1mozi.vstalkbackend.repository.PostRepository;
+import com.moz1mozi.vstalkbackend.domain.user.service.UserService;
+import com.moz1mozi.vstalkbackend.domain.post.dto.request.PostCreateDto;
+import com.moz1mozi.vstalkbackend.domain.post.dto.request.PostUpdateDto;
+import com.moz1mozi.vstalkbackend.domain.post.dto.response.PostDto;
+import com.moz1mozi.vstalkbackend.domain.user.dto.request.UserCreateDto;
+import com.moz1mozi.vstalkbackend.domain.post.dto.request.VoteOptionCreateDto;
+import com.moz1mozi.vstalkbackend.domain.post.entity.Category;
+import com.moz1mozi.vstalkbackend.domain.user.entity.User;
+import com.moz1mozi.vstalkbackend.domain.post.repository.CategoryRepository;
+import com.moz1mozi.vstalkbackend.domain.post.repository.PostRepository;
+import com.moz1mozi.vstalkbackend.domain.post.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.moz1mozi.vstalkbackend.dto.post.PostSort.CREATED_ASC;
+import static com.moz1mozi.vstalkbackend.domain.post.dto.enums.PostSort.CREATED_ASC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
